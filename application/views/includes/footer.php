@@ -1,5 +1,4 @@
-<!-- Waves Effect Plugin Js -->
-<script src="<?php echo base_url() . 'assets/plugins/node-waves/waves.js'; ?>"></script>
+
 
 
 

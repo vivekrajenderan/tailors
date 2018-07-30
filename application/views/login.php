@@ -9,9 +9,8 @@
         <link rel="icon" href="../../favicon.ico" type="image/x-icon">
 
         <!-- Google Fonts -->
-        <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&subset=latin,cyrillic-ext" rel="stylesheet" type="text/css">
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" type="text/css">
-
+        <link href="<?php echo base_url() . 'assets/font/font.css'; ?>" rel="stylesheet">
+        <link href="<?php echo base_url() . 'assets/font/fontfamily.css'; ?>" rel="stylesheet">
         <!-- Bootstrap Core Css -->
         <link href="<?php echo base_url() . 'assets/plugins/bootstrap/css/bootstrap.css'; ?>" rel="stylesheet">
 
@@ -29,7 +28,7 @@
     <body class="login-page">
         <div class="login-box">
             <div class="logo">
-                <a href="javascript:void(0);"><b>GARMENTS</b></a>
+                <a href="javascript:void(0);"><b>SS TAILOR</b></a>
                 <small>Gen IT Design</small>
             </div>
             <div class="card">

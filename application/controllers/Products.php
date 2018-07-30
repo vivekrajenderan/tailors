@@ -25,13 +25,16 @@ class Products extends CI_Controller {
 
     public function add($id = NULL) {
         $products_list = array();
+        $measurements_list = array();
         if ($id != "") {
             $products_list = $this->products_model->lists($id);
+            $measurements_list = $this->products_model->measurementlists(array("md5(product_id)" => $id));
+
             if (count($products_list) == 0) {
                 redirect(base_url() . 'products', 'refresh');
             }
         }
-        $data = array('products_list' => $products_list, 'id' => $id);
+        $data = array('products_list' => $products_list, 'id' => $id, 'measurements_list' => $measurements_list);
         $this->load->view('includes/header');
         $this->load->view('includes/sidebar');
         $this->load->view('products/form', $data);
@@ -48,21 +51,23 @@ class Products extends CI_Controller {
             if ($this->form_validation->run() == FALSE) {
                 echo json_encode(array('status' => 0, 'msg' => validation_errors()));
                 return false;
-            } else {
-
+            } else {                
                 $data = array('productname' => trim($this->input->post('productname')),
                     'price' => trim($this->input->post('price'))
                 );
+                $products_list = array();
+                if ($id != "") {
+                    $products_list = $this->products_model->lists($id);
+                }
                 if (isset($_FILES['product_image']['name']) && (!empty($_FILES['product_image']['name']))) {
                     $upload_image = $this->do_upload_image('product_image');
                     if ($upload_image['image_message'] == "success") {
-                        if ($id != "") {
-                            $products_list = $this->products_model->lists($id);
-                            if (isset($products_list[0]['product_image']) && !empty($products_list[0]['product_image'])) {
-                                $image_file = './upload/products/' . $products_list[0]['product_image'];
-                                if (file_exists($image_file)) {
-                                    unlink($image_file);
-                                }
+
+                        //Remove product Image
+                        if (isset($products_list[0]['product_image']) && !empty($products_list[0]['product_image'])) {
+                            $image_file = './upload/products/' . $products_list[0]['product_image'];
+                            if (file_exists($image_file)) {
+                                unlink($image_file);
                             }
                         }
 
@@ -71,11 +76,12 @@ class Products extends CI_Controller {
                         echo json_encode(array('status' => 0, 'msg' => "<p>Please upload only image</p>"));
                         return false;
                     }
-                } 
+                }
 
                 if ($id != "") {
                     $data['updated_on'] = date('Y-m-d H:i:s');
                     $saveproduct = $this->products_model->update($data, $id);
+                    $savemeasurement = $this->products_model->savemeasurement($products_list[0]['id'], json_decode($_POST['measurementkeyarray']),(array)json_decode($_POST['existmeasurementarray']));
                 } else {
                     $data['created_on'] = date('Y-m-d H:i:s');
                     $saveproduct = $this->products_model->save($data);
