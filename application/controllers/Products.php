@@ -11,6 +11,8 @@ class Products extends CI_Controller {
         $this->load->library('form_validation');
         if ($this->session->userdata('logged_in') == False) {
             redirect(base_url() . 'login/', 'refresh');
+        } else if ($this->session->userdata('role') == 2) {
+            redirect(base_url() . 'company/', 'refresh');
         }
     }
 
@@ -51,7 +53,7 @@ class Products extends CI_Controller {
             if ($this->form_validation->run() == FALSE) {
                 echo json_encode(array('status' => 0, 'msg' => validation_errors()));
                 return false;
-            } else {                
+            } else {
                 $data = array('productname' => trim($this->input->post('productname')),
                     'price' => trim($this->input->post('price'))
                 );
@@ -81,7 +83,7 @@ class Products extends CI_Controller {
                 if ($id != "") {
                     $data['updated_on'] = date('Y-m-d H:i:s');
                     $saveproduct = $this->products_model->update($data, $id);
-                    $savemeasurement = $this->products_model->savemeasurement($products_list[0]['id'], json_decode($_POST['measurementkeyarray']),(array)json_decode($_POST['existmeasurementarray']));
+                    $savemeasurement = $this->products_model->savemeasurement($products_list[0]['id'], json_decode($_POST['measurementkeyarray']), (array) json_decode($_POST['existmeasurementarray']));
                 } else {
                     $data['created_on'] = date('Y-m-d H:i:s');
                     $saveproduct = $this->products_model->save($data);

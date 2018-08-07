@@ -20,19 +20,34 @@
                     </div>
                     <div class="body">
                         <form id="orderform" method="POST" name="orderform" action="<?php echo base_url() . 'reports/customer/'; ?>" style="margin-bottom: 30px;">
-                            <div class="form-group form-float">
-                                <label class="form-label">From Date</label>
-                                <div class="form-line">
-                                    <input type="text" name="fromdate" id="fromdate" class="datepicker form-control" placeholder="Please choose from date..." value="<?php echo isset($_POST['fromdate']) ? $_POST['fromdate'] : ''; ?>">                                   
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group form-float">
+                                        <label class="form-label">From Date</label>
+                                        <div class="form-line">
+                                            <input type="text" name="fromdate" id="fromdate" class="datepicker form-control" placeholder="Please choose from date..." value="<?php echo isset($_POST['fromdate']) ? $_POST['fromdate'] : ''; ?>">                                   
+                                        </div>
+                                    </div>  
                                 </div>
-                            </div>                        
-                            <div class="form-group form-float">
-                                <label class="form-label">To Date</label>
-                                <div class="form-line">
-                                    <input type="text" name="todate" id="todate" class="datepicker form-control" placeholder="Please choose to date..." value="<?php echo isset($_POST['todate']) ? $_POST['todate'] : ''; ?>">                                   
+                                <div class="col-md-3">
+                                    <div class="form-group form-float">
+                                        <label class="form-label">To Date</label>
+                                        <div class="form-line">
+                                            <input type="text" name="todate" id="todate" class="datepicker form-control" placeholder="Please choose to date..." value="<?php echo isset($_POST['todate']) ? $_POST['todate'] : ''; ?>">                                   
+                                        </div>
+                                    </div> 
                                 </div>
-                            </div> 
-                            <br>
+                                <div class="col-md-6">
+                                    <div class="form-group form-float">
+                                        <label class="form-label">Customer</label>
+                                        <div class="form-line">
+                                            <input type="text" name="customername" id="customername" class="form-control" placeholder="Please select customer" value="<?php echo isset($_POST['customername']) ? $_POST['customername'] : ''; ?>">                                   
+                                            <input type="hidden" name="customerid" id="customerid" class="form-control" value="<?php echo isset($_POST['customerid']) ? $_POST['customerid'] : ''; ?>">                                   
+                                        </div>
+                                    </div> 
+                                </div>
+                            </div>
+
                             <button class="btn btn-primary waves-effect" type="submit">SUBMIT</button>
 
                         </form>
@@ -42,42 +57,64 @@
                                 <thead>
                                     <tr>
                                         <th>Order No</th>
+                                        <th>Order Date</th> 
                                         <th>Name</th>     
                                         <th>Price</th>                      
                                         <th>Quantity</th>                      
                                         <th>Total Amount</th>                      
                                         <th>Paid Amount</th>                      
                                         <th>Balance Amount</th>                      
-                                        <th>Order Date</th> 
-                                    </tr>
-                                </thead>
-                                <tfoot>
-                                    <tr>
-                                        <th>Order No</th>
-                                        <th>Name</th> 
-                                        <th>Price</th>
-                                        <th>Quantity</th> 
-                                        <th>Total Amount</th>                      
-                                        <th>Paid Amount</th>                      
-                                        <th>Balance Amount</th>                      
-                                        <th>Order Date</th>                      
 
                                     </tr>
-                                </tfoot>
+                                </thead>
+
                                 <tbody>
-                                    <?php foreach ($orders_lists as $key => $lists) { ?>
+                                    <?php
+                                    $price = $quantity = $total_amount = $paid_amount = $balance_amount = 0;
+                                    foreach ($orders_lists as $key => $lists) {
+                                        $price += $lists['price'];
+                                        $quantity += $lists['quantity'];
+                                        $total_amount += $lists['total_amount'];
+                                        $paid_amount += $lists['paid_amount'];
+                                        $balance_amount += ($lists['total_amount'] - $lists['paid_amount']);
+                                        ?>
                                         <tr>
                                             <td><?php echo isset($lists['orderno']) ? $lists['orderno'] : ""; ?></td>
+                                            <td><?php echo isset($lists['orderdate']) ? $lists['orderdate'] : ""; ?></td>
                                             <td><?php echo isset($lists['name']) ? $lists['name'] : ""; ?></td>                                                   
                                             <td><?php echo isset($lists['price']) ? $lists['price'] : ""; ?></td>    
                                             <td><?php echo isset($lists['quantity']) ? $lists['quantity'] : ""; ?></td>    
                                             <td><?php echo isset($lists['total_amount']) ? $lists['total_amount'] : ""; ?></td>    
                                             <td><?php echo isset($lists['paid_amount']) ? $lists['paid_amount'] : ""; ?></td>    
-                                            <td><?php echo $lists['total_amount'] - $lists['paid_amount']; ?></td>    
-                                            <td><?php echo isset($lists['orderdate']) ? $lists['orderdate'] : ""; ?></td>
+                                            <td><?php echo $lists['total_amount'] - $lists['paid_amount']; ?></td>
                                         </tr>       
                                     <?php } ?>
+
                                 </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th></th>
+                                        <th></th> 
+                                        <th></th>
+                                        <th>Total Price</th> 
+                                        <th>Total Quantity</th>                      
+                                        <th>Total Amount</th>                      
+                                        <th>Paid Amount</th>                      
+                                        <th>Balance Amount</th>                      
+
+                                    </tr>
+                                    <tr>
+                                        <td>&nbsp;</td>
+                                        <td>&nbsp;</td>
+                                        <td>&nbsp;</td>
+                                        <td><?php echo $price; ?></td>
+                                        <td><?php echo $quantity; ?></td>
+                                        <td><?php echo $total_amount; ?></td>
+                                        <td><?php echo $paid_amount; ?></td>
+                                        <td><?php echo $balance_amount; ?></td>
+                                    </tr>
+                                </tfoot>
+
                             </table>
                         </div>
 
@@ -110,6 +147,7 @@
 <script src="<?php echo base_url() . 'assets/plugins/jquery-datatable/extensions/export/buttons.html5.min.js'; ?>"></script>
 <script src="<?php echo base_url() . 'assets/plugins/jquery-datatable/extensions/export/buttons.print.min.js'; ?>"></script>
 <script src="<?php echo base_url() . 'assets/plugins/jquery-validation/jquery.validate.js'; ?>"></script>
+<script src="<?php echo base_url() . 'assets/js/bootstrap-typeahead.js'; ?>"></script>
 <script type="text/javascript">
     $(document).ready(function () {
         $('.datepicker').bootstrapMaterialDatePicker({
@@ -219,5 +257,20 @@
                 }
             }
         });
+    });
+    function displayResult(item) {
+        console.log(item);
+        if (item.value)
+        {
+            $("#customerid").val(item.value);
+        }
+    }
+    $('#customername').typeahead({
+        ajax: {
+            url: "<?php echo base_url() . "reports/getcustomer"; ?>",
+            method: 'post',
+            triggerLength: 1
+        },
+        onSelect: displayResult
     });
 </script>

@@ -39,7 +39,7 @@ class Orders_model extends CI_Model {
         $this->db->where('orderdetails.order_type', 'customer');
         $this->db->where('orderdetails.dels', 0);
         $query = $this->db->get();
-       
+
         if ($query->num_rows() > 0) {
             return $query->result_array();
         } else {
@@ -127,8 +127,7 @@ class Orders_model extends CI_Model {
         }
     }
 
-    public function companyreport()
-    {
+    public function companyreport() {
         $this->db->select('orderdetails.*,company.name,company.mobileno');
         $this->db->from('orderdetails');
         $this->db->join('company', 'orderdetails.order_person_id = company.id');
@@ -138,34 +137,41 @@ class Orders_model extends CI_Model {
         if (isset($_POST['todate']) && !empty($_POST['todate'])) {
             $this->db->where('orderdetails.orderdate <=', $_POST['todate']);
         }
+        if (isset($_POST['companyid']) && !empty($_POST['companyid']) && isset($_POST['companyname']) && !empty($_POST['companyname'])) {
+            $this->db->where('company.id', $_POST['companyid']);
+        }
+
         $this->db->where('orderdetails.order_type', 'company');
         $this->db->where('orderdetails.dels', 0);
-        $query = $this->db->get();       
+        $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result_array();
         } else {
             return array();
         }
     }
-    
-    public function customerreport()
-    {
-        $this->db->select('orderdetails.*,company.name,company.mobileno');
+
+    public function customerreport() {
+        $this->db->select('orderdetails.*,customers.name,customers.mobileno');
         $this->db->from('orderdetails');
-        $this->db->join('company', 'orderdetails.order_person_id = company.id');
+        $this->db->join('customers', 'orderdetails.order_person_id = customers.id');
         if (isset($_POST['fromdate']) && !empty($_POST['fromdate'])) {
             $this->db->where('orderdetails.orderdate >=', $_POST['fromdate']);
         }
         if (isset($_POST['todate']) && !empty($_POST['todate'])) {
             $this->db->where('orderdetails.orderdate <=', $_POST['todate']);
+        }
+        if (isset($_POST['customerid']) && !empty($_POST['customerid']) && isset($_POST['customername']) && !empty($_POST['customername'])) {
+            $this->db->where('customers.id', $_POST['customerid']);
         }
         $this->db->where('orderdetails.order_type', 'customer');
         $this->db->where('orderdetails.dels', 0);
-        $query = $this->db->get();       
+        $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result_array();
         } else {
             return array();
         }
     }
+
 }

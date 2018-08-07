@@ -22,7 +22,7 @@ class Login extends CI_Controller {
 
     public function ajax_check() {
 
-        
+
         if (($this->input->server('REQUEST_METHOD') == 'POST')) {
 
             $this->form_validation->set_rules('username', 'Username', 'trim|required');
@@ -41,6 +41,7 @@ class Login extends CI_Controller {
                         'firstname' => $row[0]['firstname'],
                         'lastname' => $row[0]['lastname'],
                         'mobileno' => $row[0]['mobileno'],
+                        'role' => $row[0]['role'],
                         'logged_in' => TRUE
                     );
                     $this->session->set_userdata($session_data);
