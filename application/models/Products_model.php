@@ -26,6 +26,24 @@ class Products_model extends CI_Model {
         }
     }
 
+    public function typelists($id = NULL) {
+
+        $this->db->select('product_types.*,products.productname');
+        $this->db->from('product_types');
+        $this->db->join('products', 'product_types.product_id = products.id');
+        if ($id != "") {
+            $this->db->where('md5(product_types.id)', $id);
+        }
+        $this->db->where('product_types.dels', 0);
+        $query = $this->db->get();
+
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
+        } else {
+            return array();
+        }
+    }
+    
     public function measurementlists($wheredata) {
 
         $this->db->select('*');
@@ -82,6 +100,21 @@ class Products_model extends CI_Model {
         $this->db->update("products", $set_data);
         return 1;
     }
+    
+    public function updatetype($set_data, $id) {
+        $this->db->where('md5(id)', $id);
+        $this->db->update("product_types", $set_data);
+        return 1;
+    }
+    
+    public function savetype($set_data) {
+        $i = 0;
+        $this->db->insert('product_types', $set_data);
+        if ($this->db->affected_rows() > 0) {            
+            $i = 1;
+        }
+        return $i;
+    }
 
     public function check_exist_product($name, $id = NULL) {
         $this->db->select('*');
@@ -102,6 +135,12 @@ class Products_model extends CI_Model {
     public function delete($id) {
         $this->db->where('md5(id)', $id);
         $this->db->delete("products");
+        return ($this->db->affected_rows() > 0);
+    }
+    
+    public function deletetype($id) {
+        $this->db->where('md5(id)', $id);
+        $this->db->delete("product_types");
         return ($this->db->affected_rows() > 0);
     }
 

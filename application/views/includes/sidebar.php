@@ -58,6 +58,12 @@
                         </a>
                     </li>                
                     <li>
+                        <a href="<?php echo base_url() . 'producttype'; ?>">
+                            <i class="material-icons">layers</i>
+                            <span>Product Types</span>
+                        </a>
+                    </li>                
+                    <li>
                         <a href="<?php echo base_url() . 'Companyorders'; ?>">
                             <i class="material-icons">layers</i>
                             <span>Company Orders</span>
