@@ -41,13 +41,13 @@
                                     <div class="form-group form-float">
                                         <label class="form-label">Customer</label>
                                         <div class="form-line">
-                                            <input type="text" name="customername" id="customername" class="form-control" placeholder="Please select customer" value="<?php echo isset($_POST['customername']) ? $_POST['customername'] : ''; ?>">                                   
+                                            <input type="text" name="customername" id="customername" class="form-control customertext" placeholder="Please select customer" value="<?php echo isset($_POST['customername']) ? $_POST['customername'] : ''; ?>">                                   
                                             <input type="hidden" name="customerid" id="customerid" class="form-control" value="<?php echo isset($_POST['customerid']) ? $_POST['customerid'] : ''; ?>">                                   
                                         </div>
                                     </div> 
                                 </div>
                             </div>
-
+                            <a href="javascript:void(0);" class="btn bg-grey waves-effect resetform">Reset</a>
                             <button class="btn btn-primary waves-effect" type="submit">SUBMIT</button>
 
                         </form>
@@ -58,6 +58,7 @@
                                     <tr>
                                         <th>Order No</th>
                                         <th>Order Date</th> 
+                                        <th>Delivery Date</th> 
                                         <th>Name</th>     
                                         <th>Price</th>                      
                                         <th>Quantity</th>                      
@@ -81,6 +82,7 @@
                                         <tr>
                                             <td><?php echo isset($lists['orderno']) ? $lists['orderno'] : ""; ?></td>
                                             <td><?php echo isset($lists['orderdate']) ? $lists['orderdate'] : ""; ?></td>
+                                            <td><?php echo isset($lists['deliverydate']) ? $lists['deliverydate'] : ""; ?></td>
                                             <td><?php echo isset($lists['name']) ? $lists['name'] : ""; ?></td>                                                   
                                             <td><?php echo isset($lists['price']) ? $lists['price'] : ""; ?></td>    
                                             <td><?php echo isset($lists['quantity']) ? $lists['quantity'] : ""; ?></td>    
@@ -93,9 +95,7 @@
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <th></th>
-                                        <th></th> 
-                                        <th></th>
+                                        <th colspan="4"></th>                                       
                                         <th>Total Price</th> 
                                         <th>Total Quantity</th>                      
                                         <th>Total Amount</th>                      
@@ -104,9 +104,7 @@
 
                                     </tr>
                                     <tr>
-                                        <td>&nbsp;</td>
-                                        <td>&nbsp;</td>
-                                        <td>&nbsp;</td>
+                                        <td colspan="4"></td>         
                                         <td><?php echo $price; ?></td>
                                         <td><?php echo $quantity; ?></td>
                                         <td><?php echo $total_amount; ?></td>
@@ -158,6 +156,14 @@
         });
     });
     $(function () {
+        
+        $('.resetform').click(function () {            
+            $('.datepicker').bootstrapMaterialDatePicker('setDate', null);
+            $('.datepicker').attr('value', '');
+            $('.customertext').attr('value', '');          
+            $('#orderform')[0].reset();
+        });
+        
         setTimeout(function () {
             $('.bg-red').hide('slow');
             $('.bg-green').hide('slow');
@@ -172,40 +178,22 @@
             dom: 'Bfrtip',
             buttons: [
                 {
-                    extend: 'copy',
-                    exportOptions: {
-                        columns: ':not(:last-child)',
-                    }
+                    extend: 'copy'
                 },
                 {
-                    extend: 'csv',
-                    exportOptions: {
-                        columns: ':not(:last-child)',
-                    }
+                    extend: 'csv'
                 },
                 {
-                    extend: 'excel',
-                    exportOptions: {
-                        columns: ':not(:last-child)',
-                    }
+                    extend: 'excel'
                 },
                 {
-                    extend: 'pdf',
-                    exportOptions: {
-                        columns: ':not(:last-child)',
-                    }
+                    extend: 'pdf'
                 },
                 {
-                    extend: 'print',
-                    exportOptions: {
-                        columns: ':not(:last-child)',
-                    }
+                    extend: 'print'
                 }
             ],
-            "aoColumnDefs": [
-                {'bSortable': false, 'aTargets': [6]}  //Not sorting the first and last columns
-
-            ],
+            
         });
     });
     function vieworders(orderid)
