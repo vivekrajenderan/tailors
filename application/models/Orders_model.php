@@ -19,7 +19,7 @@ class Orders_model extends CI_Model {
         }
         $this->db->where('orderdetails.order_type', 'company');
         $this->db->where('orderdetails.dels', 0);
-        $this->db->order_by('orderdetails.orderno', 'desc');
+        $this->db->order_by('orderdetails.id', 'desc');
         $query = $this->db->get();
 
         if ($query->num_rows() > 0) {
@@ -39,6 +39,7 @@ class Orders_model extends CI_Model {
         }
         $this->db->where('orderdetails.order_type', 'customer');
         $this->db->where('orderdetails.dels', 0);
+        $this->db->order_by('orderdetails.id', 'desc');
         $query = $this->db->get();
 
         if ($query->num_rows() > 0) {

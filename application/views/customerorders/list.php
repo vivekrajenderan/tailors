@@ -44,10 +44,9 @@
                                         <th>Name</th>     
                                         <th>Price</th>                      
                                         <th>Quantity</th>                      
-                                        <th>Total Amount</th>                      
-                                        <th>Paid Amount</th>                      
-                                        <th>Balance Amount</th>                      
+                                        <th>Total Amount</th> 
                                         <th>Order Date</th>                      
+                                        <th>Delivery Date</th>                      
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -57,10 +56,9 @@
                                         <th>Name</th> 
                                         <th>Price</th>
                                         <th>Quantity</th> 
-                                        <th>Total Amount</th>                      
-                                        <th>Paid Amount</th>                      
-                                        <th>Balance Amount</th>                      
-                                        <th>Order Date</th>                      
+                                        <th>Total Amount</th> 
+                                        <th>Order Date</th>   
+                                        <th>Delivery Date</th>
                                         <th>Action</th>
                                     </tr>
                                 </tfoot>
@@ -72,9 +70,10 @@
                                             <td><?php echo isset($lists['price']) ? $lists['price'] : ""; ?></td>    
                                             <td><?php echo isset($lists['quantity']) ? $lists['quantity'] : ""; ?></td>    
                                             <td><?php echo isset($lists['total_amount']) ? $lists['total_amount'] : ""; ?></td>    
-                                            <td><?php echo isset($lists['paid_amount']) ? $lists['paid_amount'] : ""; ?></td>    
-                                            <td><?php echo $lists['total_amount'] - $lists['paid_amount']; ?></td>    
+<!--                                            <td><?php echo isset($lists['paid_amount']) ? $lists['paid_amount'] : ""; ?></td>    
+                                            <td><?php echo $lists['total_amount'] - $lists['paid_amount']; ?></td>    -->
                                             <td><?php echo isset($lists['orderdate']) ? $lists['orderdate'] : ""; ?></td> 
+                                            <td><?php echo isset($lists['deliverydate']) ? $lists['deliverydate'] : ""; ?></td> 
                                             <td>
                                                 <a href="<?php echo base_url() . 'customerorders/add/' . md5($lists['id']); ?>" title="Edit" ><i class="material-icons" style="font-size: 18px;">edit</i></a>&nbsp;<a href="<?php echo base_url() . 'customerorders/delete/' . md5($lists['id']); ?>" title="Delete" onclick="return confirm('Are you sure delete the data?')"><i class="material-icons" style="font-size: 18px;">delete</i></a>
                                                 <a href="javascript:void(0);" title="View" onclick="return vieworders('<?php echo md5($lists['id']); ?>')"><i class="material-icons" style="font-size: 18px;">remove_red_eye</i></a>

@@ -150,31 +150,31 @@ class Companyorders extends CI_Controller {
                     <h4>Order Details</h4>
                     <div class="row">
                         <div class="col-md-6">
-                            <div class="col-md-5"><label>Name</label></div><div class="col-md-1">:</div><div class="col-md-5">' . $orders_list[0]['name'] . '</div>
+                            <div class="col-md-6"><label>Name</label></div><div class="col-md-6">' . $orders_list[0]['name'] . '</div>
                         </div>
                         <div class="col-md-6">
-                            <div class="col-md-5"><label>Mobile No</label></div><div class="col-md-1">:</div><div class="col-md-5">' . $orders_list[0]['mobileno'] . '</div>
+                            <div class="col-md-6"><label>Mobile No</label></div><div class="col-md-6">' . $orders_list[0]['mobileno'] . '</div>
                         </div>
                         <div class="col-md-6">
-                            <div class="col-md-5"><label>Price</label></div><div class="col-md-1">:</div><div class="col-md-5">' . $orders_list[0]['price'] . '</div>
+                            <div class="col-md-6"><label>Price</label></div><div class="col-md-6">' . $orders_list[0]['price'] . '</div>
                         </div>
                         <div class="col-md-6">
-                            <div class="col-md-5"><label>Quantity</label></div><div class="col-md-1">:</div><div class="col-md-5">' . $orders_list[0]['quantity'] . '</div>
+                            <div class="col-md-6"><label>Quantity</label></div><div class="col-md-6">' . $orders_list[0]['quantity'] . '</div>
                         </div>
                         <div class="col-md-6">
-                            <div class="col-md-5"><label>Total Amount</label></div><div class="col-md-1">:</div><div class="col-md-5">' . $orders_list[0]['total_amount'] . '</div>
+                            <div class="col-md-6"><label>Total Amount</label></div><div class="col-md-6">' . $orders_list[0]['total_amount'] . '</div>
                         </div>
                         <div class="col-md-6">
-                            <div class="col-md-5"><label>Paid Amount</label></div><div class="col-md-1">:</div><div class="col-md-5">' . $orders_list[0]['paid_amount'] . '</div>
+                            <div class="col-md-6"><label>Paid Amount</label></div><div class="col-md-6">' . $orders_list[0]['paid_amount'] . '</div>
                         </div>
                         <div class="col-md-6">
-                            <div class="col-md-5"><label>Balnce Amount</label></div><div class="col-md-1">:</div><div class="col-md-5">' . $orders_list[0]['balance_amount'] . '</div>
+                            <div class="col-md-6"><label>Balnce Amount</label></div><div class="col-md-6">' . $orders_list[0]['balance_amount'] . '</div>
                         </div>
                         <div class="col-md-6">
-                            <div class="col-md-5"><label>Order Date</label></div><div class="col-md-1">:</div><div class="col-md-5">' . $orders_list[0]['orderdate'] . '</div>
+                            <div class="col-md-6"><label>Order Date</label></div><div class="col-md-6">' . $orders_list[0]['orderdate'] . '</div>
                         </div>
                         <div class="col-md-6">
-                            <div class="col-md-5"><label>Delivery Date</label></div><div class="col-md-1">:</div><div class="col-md-5">' . $orders_list[0]['deliverydate'] . '</div>
+                            <div class="col-md-6"><label>Delivery Date</label></div><div class="col-md-6">' . $orders_list[0]['deliverydate'] . '</div>
                         </div>
                     </div>';
                 $typeresult = $this->orders_model->producttypeview();
@@ -182,7 +182,7 @@ class Companyorders extends CI_Controller {
                     $html .= '<h4>Product Types</h4><div class="row">';
                     foreach ($typeresult as $key => $value) {
 
-                        $html .= '<div class="col-md-6"><label for="email_address">' . $value['typename'] . '</label></div>';
+                        $html .= '<div class="col-md-6">' . $value['typename'] . '</div>';
                     }
                     $html .= '</div>';
                 }
@@ -190,7 +190,7 @@ class Companyorders extends CI_Controller {
                 if (count($result)) {
                     $html .= '<h4>Measurement Details</h4><div class="row">';
                     foreach ($result as $key => $value) {
-                        $html .= '<div class="col-md-6"><div class="col-md-5"><label for="email_address">' . $value['mname'] . '</label></div><div class="col-md-1">:</div><div class="col-md-5">' . $value['measurementvalue'] . '</div></div>';
+                        $html .= '<div class="col-md-6"><div class="col-md-6"><label for="email_address">' . $value['mname'] . '</label></div><div class="col-md-6">' . $value['measurementvalue'] . '</div></div>';
                     }
                 }
             }
