@@ -11,6 +11,7 @@ class Reports extends CI_Controller {
         $this->load->model('orders_model');
         $this->load->model('company_model');
         $this->load->model('customer_model');
+        $this->load->model('users_model');
         $this->load->library('form_validation');
         if ($this->session->userdata('logged_in') == False) {
             redirect(base_url() . 'login/', 'refresh');
@@ -36,8 +37,7 @@ class Reports extends CI_Controller {
     }
 
     public function customer() {
-        $orders_lists = $this->orders_model->customerreport();
-        //echo "<pre>".print_r($_POST);die;
+        $orders_lists = $this->orders_model->customerreport();        
         $data = array('orders_lists' => $orders_lists);
         $this->load->view('includes/header');
         $this->load->view('includes/sidebar');
@@ -54,6 +54,21 @@ class Reports extends CI_Controller {
             $customer_list[]=array('id'=>$value['id'],'name'=>$value['name']." ".$value['mobileno']);
         }
         echo json_encode($customer_list);
+    }
+    
+    public function staff() {        
+        $orders_lists = $this->orders_model->staffreport();
+        $list= $this->users_model->lists();
+        $user_list=array();
+        foreach($list as $key=>$value)
+        {
+            $user_list[]=array('id'=>$value['id'],'name'=>$value['firstname'].''.$value['lastname']);
+        }
+        $data = array('orders_lists' => $orders_lists,'user_list'=>$user_list);
+        $this->load->view('includes/header');
+        $this->load->view('includes/sidebar');
+        $this->load->view('reports/staff', $data);
+        $this->load->view('includes/footer');
     }
 
 }

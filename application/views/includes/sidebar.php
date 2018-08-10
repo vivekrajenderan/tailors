@@ -25,8 +25,8 @@
         <div class="menu">
             <ul class="list">
                 <li class="header">MAIN NAVIGATION</li>
-                <?php if($this->session->userdata('role') == '1') { ?>
-                    
+                <?php if ($this->session->userdata('role') == '1') { ?>
+
                     <li class="active">
                         <a href="<?php echo base_url() . 'dashboard'; ?>">
                             <i class="material-icons">home</i>
@@ -34,47 +34,61 @@
                         </a>
                     </li>
                     <li>
-                        <a href="<?php echo base_url() . 'users'; ?>">
-                            <i class="material-icons">face</i>
+                        <a href="javascript:void(0);" class="menu-toggle">
+                            <i class="material-icons">swap_calls</i>
                             <span>Staff</span>
                         </a>
+                        <ul class="ml-menu">
+                            <li>
+                                <a href="<?php echo base_url() . 'users'; ?>">List</a>
+                            </li>                        
+                            <li>
+                                <a href="<?php echo base_url() . 'users/staffbalance'; ?>">Balance</a>
+                            </li>                        
+                        </ul>
                     </li>
                     <li>
-                        <a href="<?php echo base_url() . 'company'; ?>">
-                            <i class="material-icons">text_fields</i>
-                            <span>Company</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="<?php echo base_url() . 'customer'; ?>">
-                            <i class="material-icons">text_fields</i>
+                        <a href="javascript:void(0);" class="menu-toggle">
+                            <i class="material-icons">swap_calls</i>
                             <span>Customer</span>
                         </a>
+                        <ul class="ml-menu">
+                            <li>
+                                <a href="<?php echo base_url() . 'customer'; ?>">List</a>
+                            </li>                        
+                            <li>
+                                <a href="<?php echo base_url() . 'Customerorders'; ?>">Order</a>
+                            </li>                        
+                        </ul>
                     </li>
                     <li>
-                        <a href="<?php echo base_url() . 'products'; ?>">
-                            <i class="material-icons">layers</i>
+                        <a href="javascript:void(0);" class="menu-toggle">
+                            <i class="material-icons">swap_calls</i>
+                            <span>Company</span>
+                        </a>
+                        <ul class="ml-menu">
+                            <li>
+                                <a href="<?php echo base_url() . 'company'; ?>">List</a>
+                            </li>                        
+                            <li>
+                                <a href="<?php echo base_url() . 'Companyorders'; ?>">Order</a>
+                            </li>                        
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0);" class="menu-toggle">
+                            <i class="material-icons">swap_calls</i>
                             <span>Products</span>
                         </a>
-                    </li>                
-                    <li>
-                        <a href="<?php echo base_url() . 'producttype'; ?>">
-                            <i class="material-icons">layers</i>
-                            <span>Product Types</span>
-                        </a>
-                    </li>                
-                    <li>
-                        <a href="<?php echo base_url() . 'Companyorders'; ?>">
-                            <i class="material-icons">layers</i>
-                            <span>Company Orders</span>
-                        </a>
-                    </li>                
-                    <li>
-                        <a href="<?php echo base_url() . 'Customerorders'; ?>">
-                            <i class="material-icons">layers</i>
-                            <span>Customer Orders</span>
-                        </a>
-                    </li>                
+                        <ul class="ml-menu">
+                            <li>
+                                <a href="<?php echo base_url() . 'products'; ?>">List</a>
+                            </li>                        
+                            <li>
+                                <a href="<?php echo base_url() . 'producttype'; ?>">Type</a>
+                            </li>                        
+                        </ul>
+                    </li>                             
                     <li>
                         <a href="javascript:void(0);" class="menu-toggle">
                             <i class="material-icons">swap_calls</i>
@@ -87,9 +101,18 @@
                             <li>
                                 <a href="<?php echo base_url() . 'reports/customer'; ?>">Customer</a>
                             </li>                        
+                            <li>
+                                <a href="<?php echo base_url() . 'reports/staff'; ?>">Staff</a>
+                            </li>                        
                         </ul>
                     </li>    
-                <?php } else { ?>
+                <?php } else { ?>                    
+                    <li>
+                        <a href="<?php echo base_url() . 'users/staffbalance'; ?>">
+                            <i class="material-icons">text_fields</i>
+                            <span>Staff Balance</span>
+                        </a>
+                    </li>
                     <li>
                         <a href="<?php echo base_url() . 'company'; ?>">
                             <i class="material-icons">text_fields</i>

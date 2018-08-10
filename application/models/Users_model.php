@@ -59,5 +59,41 @@ class Users_model extends CI_Model {
         $this->db->delete("users");
         return ($this->db->affected_rows() > 0);
     }
+    
+    public function balancelists($id = NULL) {
+
+        $this->db->select('staffbalance.*,users.firstname,users.lastname,users.mobileno');
+        $this->db->from('staffbalance');
+        $this->db->join('users', 'staffbalance.user_id = users.id');
+        if ($id != "") {
+            $this->db->where('md5(staffbalance.id)', $id);
+        }        
+        $this->db->where('staffbalance.dels', 0);
+        $this->db->order_by('staffbalance.id', 'desc');
+        $query = $this->db->get();
+
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
+        } else {
+            return array();
+        }
+    }
+    
+    public function savebalance($set_data) {
+        $this->db->insert('staffbalance', $set_data);
+        return ($this->db->affected_rows() > 0);
+    }
+
+    public function updatebalance($set_data, $id) {
+        $this->db->where('md5(id)', $id);
+        $this->db->update("staffbalance", $set_data);
+        return 1;
+    }
+    
+    public function deletebalance($id) {
+        $this->db->where('md5(id)', $id);
+        $this->db->delete("staffbalance");
+        return ($this->db->affected_rows() > 0);
+    }
 
 }

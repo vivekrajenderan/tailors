@@ -238,4 +238,25 @@ class Orders_model extends CI_Model {
         }
     }
 
+     public function staffreport() {
+        $this->db->select('staffbalance.*,users.firstname,users.lastname,users.mobileno');
+        $this->db->from('staffbalance');
+        $this->db->join('users', 'staffbalance.user_id = users.id');
+        if (isset($_POST['fromdate']) && !empty($_POST['fromdate'])) {
+            $this->db->where('staffbalance.buydate >=', $_POST['fromdate']);
+        }
+        if (isset($_POST['todate']) && !empty($_POST['todate'])) {
+            $this->db->where('staffbalance.buydate <=', $_POST['todate']);
+        }
+        if (isset($_POST['user_id']) && !empty($_POST['user_id']) && isset($_POST['username']) && !empty($_POST['username'])) {
+            $this->db->where('users.id', $_POST['user_id']);
+        }       
+        $this->db->where('staffbalance.dels', 0);
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
+        } else {
+            return array();
+        }
+    }
 }

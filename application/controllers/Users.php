@@ -12,13 +12,13 @@ class Users extends CI_Controller {
         $this->load->library('form_validation');
         if ($this->session->userdata('logged_in') == False) {
             redirect(base_url() . 'login/', 'refresh');
-        }
-        else if ($this->session->userdata('role') == 2) {
-            redirect(base_url() . 'company/', 'refresh');
-        }
+        }         
     }
 
     public function index() {
+        if ($this->session->userdata('role') == 2) {
+            redirect(base_url() . 'company/', 'refresh');
+        }
         $users_lists = $this->users_model->lists();
         $data = array('users_lists' => $users_lists);
         $this->load->view('includes/header');
@@ -26,8 +26,12 @@ class Users extends CI_Controller {
         $this->load->view('users/list', $data);
         $this->load->view('includes/footer');
     }
+    
 
     public function add($id = NULL) {
+        if ($this->session->userdata('role') == 2) {
+            redirect(base_url() . 'company/', 'refresh');
+        }
         $users_list = array();
         if ($id != "") {
             $users_list = $this->users_model->lists($id);
@@ -152,5 +156,75 @@ class Users extends CI_Controller {
         $msg = array("image_message" => $message, "image_file_name" => $file_name);
         return $msg;
     }
+    
+    public function staffbalance() {
+        $balance_lists = $this->users_model->balancelists();
+        $data = array('balance_lists' => $balance_lists);
+        $this->load->view('includes/header');
+        $this->load->view('includes/sidebar');
+        $this->load->view('users/balancelist', $data);
+        $this->load->view('includes/footer');
+    }
+    
+    public function staffbalanceadd($id = NULL) {
+        $balance_list = array();
+        if ($id != "") {
+            $balance_list = $this->users_model->balancelists($id);
+            if (count($balance_list) == 0) {
+                redirect(base_url() . 'users/staffbalance', 'refresh');
+            }
+        }
+        $users_list = $this->users_model->lists();
+        //echo "<pre>".print_r($balance_list);die;
+        $data = array('balance_list' => $balance_list, 'id' => $id,'users_list'=>$users_list);
+        $this->load->view('includes/header');
+        $this->load->view('includes/sidebar');
+        $this->load->view('users/balance', $data);
+        $this->load->view('includes/footer');
+    }
 
+    public function ajaxbalancesave($id = NULL) {
+
+
+        if (($this->input->server('REQUEST_METHOD') == 'POST')) {
+            $this->form_validation->set_rules('amount', 'Amount', 'trim|required|min_length[2]|max_length[10]');
+            $this->form_validation->set_rules('user_id', 'Staff', 'trim|required');
+            if ($this->form_validation->run() == FALSE) {
+                echo json_encode(array('status' => 0, 'msg' => validation_errors()));
+                return false;
+            } else {
+                $data = array('amount' => trim($this->input->post('amount')),
+                    'user_id' => trim($this->input->post('user_id')),
+                    'buydate' => trim($this->input->post('buydate'))
+                );                
+                if ($id != "") {      
+                     $data['updated_on'] = date('Y-m-d H:i:s');
+                    $saveproduct = $this->users_model->updatebalance($data, $id);                    
+                } else {
+                     $data['created_on'] = date('Y-m-d H:i:s');
+                    $saveproduct = $this->users_model->savebalance($data);
+                }
+                if ($saveproduct == 1) {
+                    $this->session->set_flashdata('SucMessage', 'Staff Balance Saved Successfully');
+                    echo json_encode(array('status' => 1));
+                } else {
+                    echo json_encode(array('status' => 0, 'msg' => 'Staff Balance Saved Not Successfully'));
+                }
+            }
+        }
+    }
+    
+     public function staffbalancedelete($id = NULL) {
+        if ($id != "") {
+            $deleteUsers = $this->users_model->updatebalance(array('dels' => 1), $id);
+            if ($deleteUsers == "1") {
+                $this->session->set_flashdata('SucMessage', 'Staff Balance has been deleted successfully!!!');
+            } else {
+                $this->session->set_flashdata('ErrorMessages', 'Staff Balance has not been deleted successfully!!!');
+            }
+            redirect(base_url() . 'users/staffbalance', 'refresh');
+        } else {
+            redirect(base_url() . 'users/staffbalance', 'refresh');
+        }
+    }
 }

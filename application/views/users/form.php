@@ -100,24 +100,6 @@
 
 <script type="text/javascript">
 
-                                $(document).ready(function () {
-                                    var wrapper = $(".input_fields_wrap"); //Fields wrapper
-                                    var add_button = $(".add_field_button"); //Add button ID
-
-                                    var x = 1; //initlal text box count
-                                    $(add_button).click(function (e) { //on add input button click
-                                        e.preventDefault();
-                                        x++; //text box increment
-                                        $(wrapper).append('<div class="form-group"><div class="form-line"><input type="text" name="measurements[]" data-id="0" class="form-control measure" placeholder="Name"/><span class="remove_field pull-right"><a href="javascript:void(0);"><i class="material-icons">remove_circle</i></a></span></div></div>'); //add input box
-
-                                    });
-                                    $(wrapper).on("click", ".remove_field", function (e) { //user click on remove text
-                                        e.preventDefault();
-                                        $(this).parent('div').remove();
-                                        x--;
-                                    })
-                                });
-
                                 function RemoveImage()
                                 {
                                     $("#usershowimage").hide();
