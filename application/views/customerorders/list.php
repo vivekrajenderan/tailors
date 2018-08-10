@@ -97,7 +97,7 @@
         <div class="modal-content">
             <div id="showorder">                
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer">                
                 <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CLOSE</button>
             </div>
         </div>
@@ -114,72 +114,86 @@
 <script src="<?php echo base_url() . 'assets/plugins/jquery-datatable/extensions/export/buttons.html5.min.js'; ?>"></script>
 <script src="<?php echo base_url() . 'assets/plugins/jquery-datatable/extensions/export/buttons.print.min.js'; ?>"></script>
 <script type="text/javascript">
-                                                    $(function () {
-                                                        setTimeout(function () {
-                                                            $('.bg-red').hide('slow');
-                                                            $('.bg-green').hide('slow');
-                                                        }, 4000);
+                                                $(function () {
+                                                    setTimeout(function () {
+                                                        $('.bg-red').hide('slow');
+                                                        $('.bg-green').hide('slow');
+                                                    }, 4000);
 
-                                                        $('.js-basic-example').DataTable({
-                                                            responsive: true
-                                                        });
-
-                                                        //Exportable table
-                                                        $('.js-exportable').DataTable({
-                                                            dom: 'Bfrtip',
-                                                            buttons: [
-                                                                {
-                                                                    extend: 'copy',
-                                                                    exportOptions: {
-                                                                        columns: ':not(:last-child)',
-                                                                    }
-                                                                },
-                                                                {
-                                                                    extend: 'csv',
-                                                                    exportOptions: {
-                                                                        columns: ':not(:last-child)',
-                                                                    }
-                                                                },
-                                                                {
-                                                                    extend: 'excel',
-                                                                    exportOptions: {
-                                                                        columns: ':not(:last-child)',
-                                                                    }
-                                                                },
-                                                                {
-                                                                    extend: 'pdf',
-                                                                    exportOptions: {
-                                                                        columns: ':not(:last-child)',
-                                                                    }
-                                                                },
-                                                                {
-                                                                    extend: 'print',
-                                                                    exportOptions: {
-                                                                        columns: ':not(:last-child)',
-                                                                    }
-                                                                }
-                                                            ],
-                                                            "aoColumnDefs": [
-                                                                {'bSortable': false, 'aTargets': [7]}  //Not sorting the first and last columns
-
-                                                            ],
-                                                        });
+                                                    $('.js-basic-example').DataTable({
+                                                        responsive: true
                                                     });
-                                                    function vieworders(orderid)
+
+                                                    //Exportable table
+                                                    $('.js-exportable').DataTable({
+                                                        dom: 'Bfrtip',
+                                                        buttons: [
+                                                            {
+                                                                extend: 'copy',
+                                                                exportOptions: {
+                                                                    columns: ':not(:last-child)',
+                                                                }
+                                                            },
+                                                            {
+                                                                extend: 'csv',
+                                                                exportOptions: {
+                                                                    columns: ':not(:last-child)',
+                                                                }
+                                                            },
+                                                            {
+                                                                extend: 'excel',
+                                                                exportOptions: {
+                                                                    columns: ':not(:last-child)',
+                                                                }
+                                                            },
+                                                            {
+                                                                extend: 'pdf',
+                                                                exportOptions: {
+                                                                    columns: ':not(:last-child)',
+                                                                }
+                                                            },
+                                                            {
+                                                                extend: 'print',
+                                                                exportOptions: {
+                                                                    columns: ':not(:last-child)',
+                                                                }
+                                                            }
+                                                        ],
+                                                        "aoColumnDefs": [
+                                                            {'bSortable': false, 'aTargets': [7]}  //Not sorting the first and last columns
+
+                                                        ],
+                                                    });
+                                                });
+                                                function vieworders(orderid)
+                                                {
+                                                    if (orderid != "")
                                                     {
-                                                        if (orderid != "")
-                                                        {
-                                                            $.ajax({
-                                                                type: "POST",
-                                                                url: "<?php echo base_url(); ?>customerorders/vieworders",
-                                                                data: "order_id=" + orderid,
-                                                                async: false,
-                                                                success:
-                                                                        function (msg) {
-                                                                            $("#showorder").html(msg);
-                                                                            $('#defaultModal').modal('show');
-                                                                        }
-                                                            });
-                                                        }
+                                                        $.ajax({
+                                                            type: "POST",
+                                                            url: "<?php echo base_url(); ?>customerorders/vieworders",
+                                                            data: "order_id=" + orderid,
+                                                            async: false,
+                                                            success:
+                                                                    function (msg) {
+                                                                        $("#showorder").html(msg);
+                                                                        $('#defaultModal').modal('show');
+                                                                    }
+                                                        });
                                                     }
+                                                }
+
+
+                                                $(function () {
+                                                    $('#printOut').click(function (e) {
+                                                        e.preventDefault();
+                                                        var w = window.open();
+                                                        var printOne = $('#showorder').html();                                                        
+                                                        w.document.write('<html><head><title>Copy Printed</title></head><body>' + printOne) + '</body></html>';
+                                                        w.window.print();
+                                                        w.document.close();
+                                                        return false;
+                                                    });
+                                                });
+
 </script>

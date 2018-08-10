@@ -19,6 +19,7 @@ class Orders_model extends CI_Model {
         }
         $this->db->where('orderdetails.order_type', 'company');
         $this->db->where('orderdetails.dels', 0);
+        $this->db->order_by('orderdetails.orderno', 'desc');
         $query = $this->db->get();
 
         if ($query->num_rows() > 0) {
@@ -77,6 +78,11 @@ class Orders_model extends CI_Model {
                     $this->db->insert('orderdetailsvalue', array('order_id' => $order_id, 'measurementvalue' => $value, 'measurement_id' => $key));
                 }
             }
+            if (isset($_POST['producttype']) && !empty($_POST['producttype'])) {
+                foreach ($_POST['producttype'] as $key => $value) {
+                    $this->db->insert('producttypevalue', array('order_id' => $order_id, 'type_id' => $key));
+                }
+            }
             $i = 1;
         }
         return $i;
@@ -124,6 +130,63 @@ class Orders_model extends CI_Model {
             return $query->result_array();
         } else {
             return array();
+        }
+    }
+
+    public function producttypevalues() {
+        $result = array();
+        $this->db->select("*,'' as typevalue");
+        $this->db->from('product_types');
+        $this->db->where('dels', 0);
+        if (isset($_POST['product_id']) && !empty($_POST['product_id'])) {
+            $this->db->where('product_id', $_POST['product_id']);
+        }
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            $result = $query->result_array();
+
+            if (isset($_POST['order_id']) && !empty($_POST['order_id'])) {
+                foreach ($result as $key => $value) {
+                    $typval = array();
+                    $this->db->select("*");
+                    $this->db->from('producttypevalue');
+                    $this->db->where('md5(order_id)', $_POST['order_id']);
+                    $this->db->where('type_id', $value['id']);
+                    $query1 = $this->db->get();
+                    if ($query1->num_rows() > 0) {
+                        $result[$key]['typevalue'] = 'checked';
+                    }
+                }
+            }
+            return $result;
+        } else {
+            return array();
+        }
+    }
+
+    public function producttypeview() {
+        $result = array();
+        if (isset($_POST['order_id']) && !empty($_POST['order_id'])) {
+            $this->db->select("product_types.*");
+            $this->db->from('product_types');
+            $this->db->join('producttypevalue', 'product_types.id = producttypevalue.type_id');
+            $this->db->where('md5(producttypevalue.order_id)', $_POST['order_id']);
+            $this->db->where('product_types.dels', 0);
+            $query = $this->db->get();
+            if ($query->num_rows() > 0) {
+                $result = $query->result_array();
+            }
+        }        
+        return $result;
+    }
+
+    public function updatetypevalues($orderid) {
+        $this->db->where('order_id', $orderid);
+        $this->db->delete("producttypevalue");
+        if (isset($_POST['producttype']) && !empty($_POST['producttype'])) {
+            foreach ($_POST['producttype'] as $key => $value) {
+                $this->db->insert('producttypevalue', array('order_id' => $orderid, 'type_id' => $key, 'typevalue' => 'checked'));
+            }
         }
     }
 

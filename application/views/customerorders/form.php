@@ -10,7 +10,7 @@
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div class="card">
                     <div class="header">
-                        <h2><?php echo ($id != "") ? "Edit" : "Create"; ?> Customer Orders <?php echo isset($order_list[0]['orderno']) ? " - ".$order_list[0]['orderno'] : ''; ?></h2>                        
+                        <h2><?php echo ($id != "") ? "Edit" : "Create"; ?> Customer Orders <?php echo isset($order_list[0]['orderno']) ? " - " . $order_list[0]['orderno'] : ''; ?></h2>                        
                     </div>
                     <div class="body">
                         <div class="alert bg-red" style="display:none;">
@@ -30,17 +30,48 @@
                                                     $selectedcustomer = "selected";
                                                 }
                                             }
-                                            echo "<option value='" . $list['id'] . "' $selectedcustomer>" . $list['name'] . "- ".$list['mobileno']."</option>";
+                                            echo "<option value='" . $list['id'] . "' $selectedcustomer>" . $list['name'] . "- " . $list['mobileno'] . "</option>";
                                         }
                                         ?>
 
                                     </select>                                    
                                 </div>
-                            </div>                           
+                            </div>    
+                            <div class="form-group form-float">
+                                <label class="form-label">Product</label>
+                                <div class="form-line">
+                                    <select class="form-control show-tick" id="product_id" name="product_id" <?php echo isset($order_list[0]['product_id']) ? "disabled" : ""; ?> onchange="getmeasuredetails(this.value)">
+                                        <option value="">-- Please Select Product--</option>
+                                        <?php
+                                        foreach ($products_list as $plist) {
+                                            $selectedproduct = "";
+                                            if (isset($order_list[0]['product_id']) && !empty($order_list[0]['product_id'])) {
+                                                if ($order_list[0]['product_id'] == $plist['id']) {
+                                                    $selectedproduct = "selected";
+                                                }
+                                            }
+                                            echo "<option value='" . $plist['id'] . "' $selectedproduct>" . $plist['productname'] . "</option>";
+                                        }
+                                        ?>
+
+                                    </select>  
+
+                                </div>
+                            </div>                            
+                            <div class="clearfix" id="measureval">                                
+
+                            </div>
+                            <br>
                             <div class="form-group form-float">
                                 <label class="form-label">Order Date</label>
                                 <div class="form-line">
                                     <input type="text" name="orderdate" id="orderdate" class="datepicker form-control" placeholder="Please choose order date..." value="<?php echo isset($order_list[0]['orderdate']) ? $order_list[0]['orderdate'] : ''; ?>">                                   
+                                </div>
+                            </div>  
+                            <div class="form-group form-float">
+                                <label class="form-label">Delivery Date</label>
+                                <div class="form-line">
+                                    <input type="text" name="deliverydate" id="deliverydate" class="datepicker form-control" placeholder="Please choose delivery date..." value="<?php echo isset($order_list[0]['deliverydate']) ? $order_list[0]['deliverydate'] : ''; ?>">                                   
                                 </div>
                             </div>  
                             <div class="form-group form-float">
@@ -76,31 +107,7 @@
                                     <input type="text" class="form-control" name="balance_amount" id="balance_amount" value="<?php echo isset($order_list[0]['balance_amount']) ? $order_list[0]['balance_amount'] : ''; ?>" disabled="" required>
                                 </div>
                             </div>
-                            <div class="form-group form-float">
-                                <label class="form-label">Product</label>
-                                <div class="form-line">
-                                    <select class="form-control show-tick" id="product_id" name="product_id" <?php echo isset($order_list[0]['product_id']) ? "disabled" : ""; ?> onchange="getmeasuredetails(this.value)">
-                                        <option value="">-- Please Select Product--</option>
-                                        <?php
-                                        foreach ($products_list as $plist) {
-                                            $selectedproduct = "";
-                                            if (isset($order_list[0]['product_id']) && !empty($order_list[0]['product_id'])) {
-                                                if ($order_list[0]['product_id'] == $plist['id']) {
-                                                    $selectedproduct = "selected";
-                                                }
-                                            }
-                                            echo "<option value='" . $plist['id'] . "' $selectedproduct>" . $plist['productname'] . "</option>";
-                                        }
-                                        ?>
-
-                                    </select>  
-
-                                </div>
-                            </div>
-                            <div class="row clearfix" id="measureval">                                
-
-                            </div>
-                            <br>
+                            
 
                             <a href="<?php echo base_url(); ?>customerorders" class="btn bg-blue-grey waves-effect" onclick="return confirm('Are you sure cancel the data?')">Cancel</a>
                             <button class="btn btn-primary waves-effect" type="submit">SUBMIT</button>
@@ -148,6 +155,9 @@
                                             orderdate: {
                                                 required: true
                                             },
+                                            deliverydate: {
+                                                required: true
+                                            },
                                             product_id: {
                                                 required: true
                                             },
@@ -183,6 +193,10 @@
                                             },
                                             orderdate: {
                                                 required: "Please choose order date"
+
+                                            },
+                                            deliverydate: {
+                                                required: "Please choose delivery date"
 
                                             },
                                             product_id: {
@@ -249,11 +263,7 @@
                                                     }
                                         });
                                     }
-                                }
-                                $('#price #quantity').on('blur change', blurChange);
-                                function blurChange(e) {
-                                    alert("came");
-                                }
+                                }                                
                                 $(".totalamount").on("click blur change", function (event) {
                                     var totalamount = $("#price").val() * $("#quantity").val();
                                     $("#total_amount").val(totalamount);
