@@ -289,6 +289,10 @@ class Users extends CI_Controller {
                 if ($saveusers == 1) {
                     $this->session->set_userdata('firstname', $this->input->post('firstname'));
                     $this->session->set_userdata('lastname', $this->input->post('lastname'));                    
+                    if(isset($data['userimage']) && !empty($data['userimage']))
+                    {
+                        $this->session->set_userdata('userimage', $data['userimage']);
+                    }
                     $this->session->set_flashdata('SucMessage', 'Profile Saved Successfully');
                     echo json_encode(array('status' => 1));
                 } else {

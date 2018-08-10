@@ -5,7 +5,15 @@
         <!-- User Info -->
         <div class="user-info">
             <div class="image">
-                <img src="<?php echo base_url() . 'assets/images/user.png'; ?>" width="48" height="48" alt="User" />
+                <?php
+                $image_name = "no_image.png";
+                if ($this->session->userdata('userimage')) {
+                    if (file_exists("./upload/users/" .$this->session->userdata('userimage'))) {
+                        $image_name = $this->session->userdata('userimage');
+                    } 
+                }
+                ?>
+                <img src="<?php echo base_url() . 'upload/users/' . $image_name; ?>" width="48" height="48" alt="User" />
             </div>
             <div class="info-container">
                 <div class="name" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?php echo $this->session->userdata('firstname') . ' ' . $this->session->userdata('lastname'); ?></div>
