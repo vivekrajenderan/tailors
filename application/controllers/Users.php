@@ -227,15 +227,15 @@ class Users extends CI_Controller {
         }
     }
 
-    public function profile($id = NULL) {
+    public function profile() {
         $users_list = array();
         if ($this->session->userdata('id')) {
-            $users_list = $this->users_model->lists(md5($this->session->userdata('id')));
+            $users_list = $this->users_model->lists();
             if (count($users_list) == 0) {
                 redirect(base_url() . 'companyorders', 'refresh');
             }
         }
-        $data = array('users_list' => $users_list, 'id' => $id);
+        $data = array('users_list' => $users_list);
         $this->load->view('includes/header');
         $this->load->view('includes/sidebar');
         $this->load->view('users/profile', $data);
