@@ -200,29 +200,7 @@
                                             });
                                             return false; // required to block normal submit since you used ajax
                                         }
-                                    });
-                                    $.validator.addMethod("existusername", function (value, element) {
-                                        var checkUser = check_exist_user(value);
-                                        if (checkUser == "1")
-                                        {
-                                            return false;
-                                        }
-                                        return true;
-
-                                    }, "User Name Already Exists!");
+                                    });                                    
                                 });
-                                function check_exist_user(username) {
-                                    var isSuccess = 0;
-                                    $.ajax({
-                                        type: "POST",
-                                        url: "<?php echo base_url(); ?>users/exist_users_check",
-                                        data: "username=" + username + "&id=" + "<?php echo $id; ?>",
-                                        async: false,
-                                        success:
-                                                function (msg) {
-                                                    isSuccess = msg === "1" ? 1 : 0
-                                                }
-                                    });
-                                    return isSuccess;
-                                }
+                                
 </script>
