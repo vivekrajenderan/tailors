@@ -11,9 +11,10 @@ class Orders_model extends CI_Model {
 
     public function companyorderlists($id = NULL) {
 
-        $this->db->select('orderdetails.*,company.name,company.mobileno');
+        $this->db->select('orderdetails.*,company.name,company.address,company.mobileno,products.productname');
         $this->db->from('orderdetails');
         $this->db->join('company', 'orderdetails.order_person_id = company.id');
+        $this->db->join('products', 'orderdetails.product_id = products.id');
         if ($id != "") {
             $this->db->where('md5(orderdetails.id)', $id);
         }
@@ -31,9 +32,10 @@ class Orders_model extends CI_Model {
 
     public function customerorderlists($id = NULL) {
 
-        $this->db->select('orderdetails.*,customers.name,customers.mobileno');
+        $this->db->select('orderdetails.*,customers.name,customers.address,customers.mobileno,products.productname');
         $this->db->from('orderdetails');
         $this->db->join('customers', 'orderdetails.order_person_id = customers.id');
+        $this->db->join('products', 'orderdetails.product_id = products.id');
         if ($id != "") {
             $this->db->where('md5(orderdetails.id)', $id);
         }
@@ -177,7 +179,7 @@ class Orders_model extends CI_Model {
             if ($query->num_rows() > 0) {
                 $result = $query->result_array();
             }
-        }        
+        }
         return $result;
     }
 
@@ -238,7 +240,7 @@ class Orders_model extends CI_Model {
         }
     }
 
-     public function staffreport() {
+    public function staffreport() {
         $this->db->select('staffbalance.*,users.firstname,users.lastname,users.mobileno');
         $this->db->from('staffbalance');
         $this->db->join('users', 'staffbalance.user_id = users.id');
@@ -250,7 +252,7 @@ class Orders_model extends CI_Model {
         }
         if (isset($_POST['user_id']) && !empty($_POST['user_id']) && isset($_POST['username']) && !empty($_POST['username'])) {
             $this->db->where('users.id', $_POST['user_id']);
-        }       
+        }
         $this->db->where('staffbalance.dels', 0);
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
@@ -259,4 +261,5 @@ class Orders_model extends CI_Model {
             return array();
         }
     }
+
 }

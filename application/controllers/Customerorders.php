@@ -175,6 +175,9 @@ class Customerorders extends CI_Controller {
                         <div class="col-md-6">
                             <div class="col-md-6"><label>Delivery Date</label></div><div class="col-md-6">' . $orders_list[0]['deliverydate'] . '</div>
                         </div>
+                        <div class="col-md-6">
+                            <div class="col-md-6"><label>Product Name</label></div><div class="col-md-6">' . $orders_list[0]['productname'] . '</div>
+                        </div>
                     </div>';
 
                 $typeresult = $this->orders_model->producttypeview();
@@ -204,53 +207,9 @@ class Customerorders extends CI_Controller {
             $_POST['order_id'] = $_GET['order_id'];
             $html = "";
             $orders_list = $this->orders_model->customerorderlists($_POST['order_id']);
-            if (count($orders_list)) {
-                $html .= '<h4 style="text-align:right;">' . $orders_list[0]['orderno'] . '</h4>
-                    <h4>Order Details</h4>
-                    <table style="border-collapse: collapse;">
-                        <tr>
-                            <td>Name</td><td>' . $orders_list[0]['name'] . '</td>
-                       
-                        
-                            <td>Mobile No</td><td>' . $orders_list[0]['mobileno'] . '</td>
-                        </tr>
-                        <tr>
-                            <td>Price</td><td>' . $orders_list[0]['price'] . '</td>
-                       
-                            <td>Quantity</td><td>' . $orders_list[0]['quantity'] . '</td>
-                        </tr>
-                        <tr>
-                            <td>Total Amount</td><td>' . $orders_list[0]['total_amount'] . '</td>
-                       
-                            <td>Paid Amount</td><td>' . $orders_list[0]['paid_amount'] . '</td>
-                        </tr>
-                        <tr>
-                            <td>Balnce Amount</td><td>' . $orders_list[0]['balance_amount'] . '</td>
-                        
-                            <td>Order Date</td><td>' . $orders_list[0]['orderdate'] . '</td>
-                        </tr>
-                        <tr><td>Delivery Date</td><td colspan="3">'.$orders_list[0]['deliverydate'].'</td>
-                    </table>';
-
-                $typeresult = $this->orders_model->producttypeview();
-                if (count($typeresult)) {
-                    $html .= '<h4>Product Types</h4><span>';
-                    foreach ($typeresult as $key => $value) {
-
-                        $html .= $value['typename'] . ",";
-                    }
-                    $html .= '</span>';
-                }
-                $result = $this->orders_model->measurementvalues();
-                if (count($result)) {
-                    $html .= '<h4>Measurement Details</h4><span>';
-                    foreach ($result as $key => $value) {
-                        $html .= '<b>' . $value['mname'] . '</b> - ' . $value['measurementvalue'] . ',';
-                    }
-                }
-            }
-
-            $this->load->view('customerorders/print', array('htmlcontent' => $html));
+            $result = $this->orders_model->measurementvalues();
+            $typeresult = $this->orders_model->producttypeview();           
+            $this->load->view('customerorders/print', array('htmlcontent' => $html,'orders_list'=>$orders_list,'typeresult'=>$typeresult,'measurements'=>$result));
         }
     }
 
