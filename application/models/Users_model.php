@@ -16,13 +16,11 @@ class Users_model extends CI_Model {
         if ($id != "") {
             $this->db->where('md5(id)', $id);
         }
-        if ($this->session->userdata('id')) {
-            $this->db->where('md5(id)', md5($this->session->userdata('id')));
-        } else {
+        if ($this->session->userdata('role') == 2) {
             $this->db->where('role', 2);
         }
         $this->db->where('dels', 0);
-        $query = $this->db->get();        
+        $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result_array();
         } else {

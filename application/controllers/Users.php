@@ -230,7 +230,7 @@ class Users extends CI_Controller {
     public function profile() {
         $users_list = array();
         if ($this->session->userdata('id')) {
-            $users_list = $this->users_model->lists();
+            $users_list = $this->users_model->lists(md5($this->session->userdata('id')));
             if (count($users_list) == 0) {
                 redirect(base_url() . 'companyorders', 'refresh');
             }
