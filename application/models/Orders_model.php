@@ -51,6 +51,131 @@ class Orders_model extends CI_Model {
         }
     }
 
+    public function ajaxcustomerorderlists($data) {
+
+        $this->db->select('orderdetails.*,customers.name,customers.address,customers.mobileno,products.productname');
+        $this->db->from('orderdetails');
+        $this->db->join('customers', 'orderdetails.order_person_id = customers.id');
+        $this->db->join('products', 'orderdetails.product_id = products.id');
+        $this->db->where('orderdetails.order_type', 'customer');
+        $this->db->where('orderdetails.dels', 0);
+
+        if (isset($data['searchString']) && !empty($data['searchString'])) {
+            $searcharray = array(                
+                'customers.name' => $data['searchString'],
+                'orderdetails.price' => $data['searchString'],
+                'orderdetails.quantity' => $data['searchString'],
+                'orderdetails.total_amount' => $data['searchString'],
+                'orderdetails.orderdate' => $data['searchString'],
+                'orderdetails.deliverydate' => $data['searchString']
+            );
+            $this->db->like('orderdetails.orderno', $data['searchString']);
+            $this->db->or_like($searcharray);
+        }
+
+        $this->db->order_by($data['sortingcolumn'], $data['orderby']);
+        $this->db->limit($data['end'], $data['start']);
+        $query = $this->db->get();        
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
+        } else {
+            return array();
+        }
+    }
+    
+    public function ajaxcustomerordercount($data) {
+
+        $this->db->select('count(orderdetails.id) as totalcount');
+        $this->db->from('orderdetails');
+        $this->db->join('customers', 'orderdetails.order_person_id = customers.id');
+        $this->db->join('products', 'orderdetails.product_id = products.id');
+        $this->db->where('orderdetails.order_type', 'customer');
+        $this->db->where('orderdetails.dels', 0);
+
+        if (isset($data['searchString']) && !empty($data['searchString'])) {
+            $searcharray = array(                
+                'customers.name' => $data['searchString'],
+                'orderdetails.price' => $data['searchString'],
+                'orderdetails.quantity' => $data['searchString'],
+                'orderdetails.total_amount' => $data['searchString'],
+                'orderdetails.orderdate' => $data['searchString'],
+                'orderdetails.deliverydate' => $data['searchString']
+            );
+            $this->db->like('orderdetails.orderno', $data['searchString']);
+            $this->db->or_like($searcharray);
+        }
+               
+        $query = $this->db->get();        
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
+        } else {
+            return array();
+        }
+    }
+
+    
+    public function ajaxcompanyorderlists($data) {
+
+        $this->db->select('orderdetails.*,company.name,company.address,company.mobileno,products.productname');
+        $this->db->from('orderdetails');
+        $this->db->join('company', 'orderdetails.order_person_id = company.id');
+        $this->db->join('products', 'orderdetails.product_id = products.id');
+        $this->db->where('orderdetails.order_type', 'company');
+        $this->db->where('orderdetails.dels', 0);
+
+        if (isset($data['searchString']) && !empty($data['searchString'])) {
+            $searcharray = array(                
+                'customers.name' => $data['searchString'],
+                'orderdetails.price' => $data['searchString'],
+                'orderdetails.quantity' => $data['searchString'],
+                'orderdetails.total_amount' => $data['searchString'],
+                'orderdetails.orderdate' => $data['searchString'],
+                'orderdetails.deliverydate' => $data['searchString']
+            );
+            $this->db->like('orderdetails.orderno', $data['searchString']);
+            $this->db->or_like($searcharray);
+        }
+
+        $this->db->order_by($data['sortingcolumn'], $data['orderby']);
+        $this->db->limit($data['end'], $data['start']);
+        $query = $this->db->get();        
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
+        } else {
+            return array();
+        }
+    }
+    
+    public function ajaxcompanyordercount($data) {
+
+        $this->db->select('count(orderdetails.id) as totalcount');
+        $this->db->from('orderdetails');
+        $this->db->join('company', 'orderdetails.order_person_id = company.id');
+        $this->db->join('products', 'orderdetails.product_id = products.id');
+        $this->db->where('orderdetails.order_type', 'company');
+        $this->db->where('orderdetails.dels', 0);
+
+        if (isset($data['searchString']) && !empty($data['searchString'])) {
+            $searcharray = array(                
+                'customers.name' => $data['searchString'],
+                'orderdetails.price' => $data['searchString'],
+                'orderdetails.quantity' => $data['searchString'],
+                'orderdetails.total_amount' => $data['searchString'],
+                'orderdetails.orderdate' => $data['searchString'],
+                'orderdetails.deliverydate' => $data['searchString']
+            );
+            $this->db->like('orderdetails.orderno', $data['searchString']);
+            $this->db->or_like($searcharray);
+        }
+               
+        $query = $this->db->get();        
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
+        } else {
+            return array();
+        }
+    }
+    
     public function measurementlists($wheredata) {
 
         $this->db->select('*');

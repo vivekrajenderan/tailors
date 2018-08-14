@@ -17,12 +17,58 @@ class Customerorders extends CI_Controller {
     }
 
     public function index() {
-        $orders_lists = $this->orders_model->customerorderlists();
-        $data = array('orders_lists' => $orders_lists);
+        //$orders_lists = $this->orders_model->customerorderlists();
+        //$data = array('orders_lists' => $orders_lists);
         $this->load->view('includes/header');
         $this->load->view('includes/sidebar');
-        $this->load->view('customerorders/list', $data);
+        $this->load->view('customerorders/list');
         $this->load->view('includes/footer');
+    }
+
+    public function ajaxorders() {
+
+        $start = isset($_REQUEST['start']) ? $_REQUEST['start'] : 0;
+        $end = isset($_REQUEST['length']) ? $_REQUEST['length'] : 10;
+
+        $ordercolumn = array('0' => 'orderdetails.orderno', '1' => 'customers.name', '2' => 'orderdetails.price', '3' => 'orderdetails.quantity', '4' => 'orderdetails.total_amount', '5' => 'orderdetails.orderdate', '6' => 'orderdetails.deliverydate');
+        $pagecolumn = isset($_REQUEST['order'][0]['column']) ? $_REQUEST['order'][0]['column'] : 0;
+        $pageorder = isset($_REQUEST['order'][0]['dir']) ? $_REQUEST['order'][0]['dir'] : 'desc';
+        $searchvalue = isset($_REQUEST['search']['value']) ? $_REQUEST['search']['value'] : "";
+        $sortingcolumn = 'orderno';
+        if (isset($ordercolumn[$pagecolumn])) {
+            $sortingcolumn = $ordercolumn[$pagecolumn];
+        }
+        $data = array('sortingcolumn' => $sortingcolumn, 'orderby' => $pageorder, 'searchString' => $searchvalue, 'start' => $start, 'end' => $end);
+        $orders_lists = $this->orders_model->ajaxcustomerorderlists($data);
+        $orders_count = $this->orders_model->ajaxcustomerordercount($data);
+        //echo "<pre>" . print_r($orders_count);
+        //die;
+        $pcount = 0;
+        if (isset($orders_count[0]['totalcount']) && !empty($orders_count[0]['totalcount']))
+            $pcount = ($orders_count[0]['totalcount']);
+        $dataR = array(
+            'data' => array(),
+            "draw" => isset($_REQUEST['draw']) ? $_REQUEST['draw'] : 1,
+            "recordsTotal" => $pcount,
+            "recordsFiltered" => $pcount,
+        );
+        foreach ($orders_lists as $key => $value) {
+            $tempD = array();
+            // Row based column PUSH
+            $tempD[] = $value['orderno'];
+            $tempD[] = $value['name'];
+            $tempD[] = $value['price'];
+            $tempD[] = $value['quantity'];
+            $tempD[] = $value['total_amount'];
+            $tempD[] = $value['orderdate'];
+            $tempD[] = $value['deliverydate'];
+            $tempD[] = $value['id'];           
+            $tempD["DT_RowId"] = md5($value['id']);           
+            // Row  PUSH
+            $dataR['data'][] = $tempD;
+        }
+        echo json_encode($dataR);
+        exit();
     }
 
     public function add($id = NULL) {
@@ -208,8 +254,8 @@ class Customerorders extends CI_Controller {
             $html = "";
             $orders_list = $this->orders_model->customerorderlists($_POST['order_id']);
             $result = $this->orders_model->measurementvalues();
-            $typeresult = $this->orders_model->producttypeview();           
-            $this->load->view('customerorders/print', array('htmlcontent' => $html,'orders_list'=>$orders_list,'typeresult'=>$typeresult,'measurements'=>$result));
+            $typeresult = $this->orders_model->producttypeview();
+            $this->load->view('customerorders/print', array('htmlcontent' => $html, 'orders_list' => $orders_list, 'typeresult' => $typeresult, 'measurements' => $result));
         }
     }
 

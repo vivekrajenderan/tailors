@@ -15,7 +15,7 @@
                                 <h2>
                                     Customer Order Lists
                                 </h2>
-                            </div>
+                            </div>                            
                             <div class="col-md-6 col-xs-4">
                                 <div class="pull-right"><button onclick="location.href = '<?php echo base_url() . "customerorders/add"; ?>';" type="button" class="btn bg-cyan waves-effect">Create Order</button></div>
                             </div>
@@ -62,26 +62,26 @@
                                         <th>Action</th>
                                     </tr>
                                 </tfoot>
-                                <tbody>
-                                    <?php foreach ($orders_lists as $key => $lists) { ?>
-                                        <tr>
-                                            <td><?php echo isset($lists['orderno']) ? $lists['orderno'] : ""; ?></td>
-                                            <td><?php echo isset($lists['name']) ? $lists['name'] : ""; ?></td>                                                   
-                                            <td><?php echo isset($lists['price']) ? $lists['price'] : ""; ?></td>    
-                                            <td><?php echo isset($lists['quantity']) ? $lists['quantity'] : ""; ?></td>    
-                                            <td><?php echo isset($lists['total_amount']) ? $lists['total_amount'] : ""; ?></td>    
-<!--                                            <td><?php echo isset($lists['paid_amount']) ? $lists['paid_amount'] : ""; ?></td>    
-                                            <td><?php echo $lists['total_amount'] - $lists['paid_amount']; ?></td>    -->
-                                            <td><?php echo isset($lists['orderdate']) ? $lists['orderdate'] : ""; ?></td> 
-                                            <td><?php echo isset($lists['deliverydate']) ? $lists['deliverydate'] : ""; ?></td> 
-                                            <td>
-                                                <a href="<?php echo base_url() . 'customerorders/add/' . md5($lists['id']); ?>" title="Edit" ><i class="material-icons" style="font-size: 18px;">edit</i></a>&nbsp;<a href="<?php echo base_url() . 'customerorders/delete/' . md5($lists['id']); ?>" title="Delete" onclick="return confirm('Are you sure delete the data?')"><i class="material-icons" style="font-size: 18px;">delete</i></a>
-                                                <a href="javascript:void(0);" title="View" onclick="return vieworders('<?php echo md5($lists['id']); ?>')"><i class="material-icons" style="font-size: 18px;">remove_red_eye</i></a>
-                                            </td>                                        
+<!--                                <tbody>
+                                <?php foreach ($orders_lists as $key => $lists) { ?>
+                                                                                            <tr>
+                                                                                                <td><?php echo isset($lists['orderno']) ? $lists['orderno'] : ""; ?></td>
+                                                                                                <td><?php echo isset($lists['name']) ? $lists['name'] : ""; ?></td>                                                   
+                                                                                                <td><?php echo isset($lists['price']) ? $lists['price'] : ""; ?></td>    
+                                                                                                <td><?php echo isset($lists['quantity']) ? $lists['quantity'] : ""; ?></td>    
+                                                                                                <td><?php echo isset($lists['total_amount']) ? $lists['total_amount'] : ""; ?></td>    
+                                                                                                    <td><?php echo isset($lists['paid_amount']) ? $lists['paid_amount'] : ""; ?></td>    
+                                                                                                <td><?php echo $lists['total_amount'] - $lists['paid_amount']; ?></td>    
+                                                                                                <td><?php echo isset($lists['orderdate']) ? $lists['orderdate'] : ""; ?></td> 
+                                                                                                <td><?php echo isset($lists['deliverydate']) ? $lists['deliverydate'] : ""; ?></td> 
+                                                                                                <td>
+                                                                                                    <a href="<?php echo base_url() . 'customerorders/add/' . md5($lists['id']); ?>" title="Edit" ><i class="material-icons" style="font-size: 18px;">edit</i></a>&nbsp;<a href="<?php echo base_url() . 'customerorders/delete/' . md5($lists['id']); ?>" title="Delete" onclick="return confirm('Are you sure delete the data?')"><i class="material-icons" style="font-size: 18px;">delete</i></a>
+                                                                                                    <a href="javascript:void(0);" title="View" onclick="return vieworders('<?php echo md5($lists['id']); ?>')"><i class="material-icons" style="font-size: 18px;">remove_red_eye</i></a>
+                                                                                                </td>                                        
 
-                                        </tr>       
-                                    <?php } ?>
-                                </tbody>
+                                                                                            </tr>       
+                                <?php } ?>
+                                </tbody>-->
                             </table>
                         </div>
                     </div>
@@ -91,6 +91,7 @@
         <!-- #END# Exportable Table -->
     </div>
 </section>
+
 <div class="modal fade" id="defaultModal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -113,86 +114,110 @@
 <script src="<?php echo base_url() . 'assets/plugins/jquery-datatable/extensions/export/buttons.html5.min.js'; ?>"></script>
 <script src="<?php echo base_url() . 'assets/plugins/jquery-datatable/extensions/export/buttons.print.min.js'; ?>"></script>
 <script type="text/javascript">
-                                                $(function () {
-                                                    setTimeout(function () {
-                                                        $('.bg-red').hide('slow');
-                                                        $('.bg-green').hide('slow');
-                                                    }, 4000);
+                                    $(function () {
+                                        setTimeout(function () {
+                                            $('.bg-red').hide('slow');
+                                            $('.bg-green').hide('slow');
+                                        }, 4000);
 
-                                                    $('.js-basic-example').DataTable({
-                                                        responsive: true
-                                                    });
+                                        $('.js-basic-example').DataTable({
+                                            responsive: true
+                                        });
 
-                                                    //Exportable table
-                                                    $('.js-exportable').DataTable({
-                                                        dom: 'Bfrtip',
-                                                        buttons: [
-                                                            {
-                                                                extend: 'copy',
-                                                                exportOptions: {
-                                                                    columns: ':not(:last-child)',
-                                                                }
-                                                            },
-                                                            {
-                                                                extend: 'csv',
-                                                                exportOptions: {
-                                                                    columns: ':not(:last-child)',
-                                                                }
-                                                            },
-                                                            {
-                                                                extend: 'excel',
-                                                                exportOptions: {
-                                                                    columns: ':not(:last-child)',
-                                                                }
-                                                            },
-                                                            {
-                                                                extend: 'pdf',
-                                                                exportOptions: {
-                                                                    columns: ':not(:last-child)',
-                                                                }
-                                                            },
-                                                            {
-                                                                extend: 'print',
-                                                                exportOptions: {
-                                                                    columns: ':not(:last-child)',
-                                                                }
-                                                            }
-                                                        ],
-                                                        "aoColumnDefs": [
-                                                            {'bSortable': false, 'aTargets': [7]}  //Not sorting the first and last columns
-
-                                                        ],
-                                                    });
-                                                });
-                                                function vieworders(orderid)
+                                        //Exportable table
+                                        var datalist = $('.js-exportable').DataTable({
+                                            dom: 'Bfrtip',
+                                            "processing": true,
+                                            "serverSide": true,
+                                            "ajax": {
+                                                "url": "<?php echo base_url() . "customerorders/ajaxorders"; ?>",
+                                                "type": "POST"
+                                            },
+                                            buttons: [
                                                 {
-                                                    if (orderid != "")
-                                                    {
-                                                        $.ajax({
-                                                            type: "POST",
-                                                            url: "<?php echo base_url(); ?>customerorders/vieworders",
-                                                            data: "order_id=" + orderid,
-                                                            async: false,
-                                                            success:
-                                                                    function (msg) {
-                                                                        $("#showorder").html(msg);
-                                                                        $('#defaultModal').modal('show');
-                                                                    }
-                                                        });
+                                                    extend: 'copy',
+                                                    exportOptions: {
+                                                        columns: ':not(:last-child)',
+                                                    }
+                                                },
+                                                {
+                                                    extend: 'csv',
+                                                    exportOptions: {
+                                                        columns: ':not(:last-child)',
+                                                    }
+                                                },
+                                                {
+                                                    extend: 'excel',
+                                                    exportOptions: {
+                                                        columns: ':not(:last-child)',
+                                                    }
+                                                },
+                                                {
+                                                    extend: 'pdf',
+                                                    exportOptions: {
+                                                        columns: ':not(:last-child)',
+                                                    }
+                                                },
+                                                {
+                                                    extend: 'print',
+                                                    exportOptions: {
+                                                        columns: ':not(:last-child)',
                                                     }
                                                 }
+                                            ],
+                                            "aoColumnDefs": [
+                                                {'bSortable': false, 'aTargets': [7]}, //Not sorting the first and last columns
+                                                {
+                                                    "targets": -1,
+                                                    "data": null,
+                                                    "defaultContent": '<a href="javascript:void(0);" title="Edit" class="editlink"><i class="material-icons" style="font-size: 18px;">edit</i></a>&nbsp;<a href="javascript:void(0);" title="Delete" class="deletelink"><i class="material-icons" style="font-size: 18px;">delete</i></a><a href="javascript:void(0);" title="View" class="viewlink"><i class="material-icons" style="font-size: 18px;">remove_red_eye</i></a>'
+                                                }
 
+                                            ],
+                                        });
+                                        var orderid = "";
+                                        $('.js-exportable tbody').on('click', 'tr', function () {
+                                            orderid = this.id;
+                                        });
+                                        $(document).on('click', '.editlink', function () {
+                                            if (orderid != "")
+                                            {
+                                                window.location = "<?php echo base_url() . 'customerorders/add/'; ?>" + orderid;
+                                            }
+                                        });
+                                        $(document).on('click', '.deletelink', function () {
+                                            if (orderid != "")
+                                            {
+                                                if (confirm("Are you sure delete the data!"))
+                                                {
+                                                    window.location = "<?php echo base_url() . 'customerorders/delete/'; ?>" + orderid;
+                                                }
+                                            }
+                                        });
+                                        $(document).on('click', '.viewlink', function () {
+                                            if (orderid != "")
+                                            {
+                                                vieworders(orderid);
+                                            }
+                                        });
 
-                                                $(function () {
-                                                    $('#printOut').click(function (e) {
-                                                        e.preventDefault();
-                                                        var w = window.open();
-                                                        var printOne = $('#showorder').html();                                                        
-                                                        w.document.write('<html><head><title>Copy Printed</title></head><body>' + printOne) + '</body></html>';
-                                                        w.window.print();
-                                                        w.document.close();
-                                                        return false;
-                                                    });
-                                                });
+                                    });
+                                    function vieworders(orderid)
+                                    {
+                                        if (orderid != "")
+                                        {
+                                            $.ajax({
+                                                type: "POST",
+                                                url: "<?php echo base_url(); ?>customerorders/vieworders",
+                                                data: "order_id=" + orderid,
+                                                async: false,
+                                                success:
+                                                        function (msg) {
+                                                            $("#showorder").html(msg);
+                                                            $('#defaultModal').modal('show');
+                                                        }
+                                            });
+                                        }
+                                    }
 
 </script>
