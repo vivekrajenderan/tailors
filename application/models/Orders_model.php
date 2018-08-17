@@ -9,7 +9,7 @@ class Orders_model extends CI_Model {
         $this->load->database();
     }
 
-    public function companyorderlists($id = NULL) {
+    public function companyorderlists($id = NULL, $data = array()) {
 
         $this->db->select('orderdetails.*,company.name,company.address,company.mobileno,products.productname');
         $this->db->from('orderdetails');
@@ -17,6 +17,9 @@ class Orders_model extends CI_Model {
         $this->db->join('products', 'orderdetails.product_id = products.id');
         if ($id != "") {
             $this->db->where('md5(orderdetails.id)', $id);
+        }
+        if (isset($data['created_on']) && !empty($data['created_on'])) {
+            $this->db->where('DATE(orderdetails.created_on)', date('Y-m-d'));
         }
         $this->db->where('orderdetails.order_type', 'company');
         $this->db->where('orderdetails.dels', 0);
@@ -30,7 +33,7 @@ class Orders_model extends CI_Model {
         }
     }
 
-    public function customerorderlists($id = NULL) {
+    public function customerorderlists($id = NULL,$data = array()) {
 
         $this->db->select('orderdetails.*,customers.name,customers.address,customers.mobileno,products.productname');
         $this->db->from('orderdetails');
@@ -38,6 +41,9 @@ class Orders_model extends CI_Model {
         $this->db->join('products', 'orderdetails.product_id = products.id');
         if ($id != "") {
             $this->db->where('md5(orderdetails.id)', $id);
+        }
+        if (isset($data['created_on']) && !empty($data['created_on'])) {
+            $this->db->where('DATE(orderdetails.created_on)', date('Y-m-d'));
         }
         $this->db->where('orderdetails.order_type', 'customer');
         $this->db->where('orderdetails.dels', 0);
@@ -452,6 +458,30 @@ class Orders_model extends CI_Model {
         $this->db->where('md5(id)', $id);
         $this->db->delete("companydeliverydetails");
         return ($this->db->affected_rows() > 0);
+    }
+
+    public function ordercount($type) {
+        $result = 0;
+        $currentdate = date('Y-m-d');
+        $this->db->select('count(*) as totalorder');
+        $this->db->from('orderdetails');
+        if ($type == 'today') {
+            $this->db->where('DATE(created_on)', date('Y-m-d'));
+        }
+        if ($type == 'yesterday') {
+            $this->db->where('DATE(created_on) = DATE_SUB(CURDATE(),INTERVAL 1 DAY)');
+        }
+        if ($type == 'lastweek') {
+            $this->db->where('YEARWEEK(DATE(created_on),1) = YEARWEEK(CURRENT_DATE, 1)');
+        }
+        $this->db->where('orderdetails.dels', 0);
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            $list = $query->result_array();
+            $result = $list[0]['totalorder'];
+        }
+
+        return $result;
     }
 
 }
