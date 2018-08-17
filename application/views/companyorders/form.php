@@ -10,7 +10,7 @@
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div class="card">
                     <div class="header">
-                        <h2><?php echo ($id != "") ? "Edit" : "Create"; ?> Company Orders <?php echo isset($order_list[0]['orderno']) ? " - ".$order_list[0]['orderno'] : ''; ?></h2>                        
+                        <h2><?php echo ($id != "") ? "Edit" : "Create"; ?> Company Orders <?php echo isset($order_list[0]['orderno']) ? " - " . $order_list[0]['orderno'] : ''; ?></h2>                        
                     </div>
                     <div class="body">
                         <div class="alert bg-red" style="display:none;">
@@ -40,7 +40,7 @@
                             <div class="form-group form-float">
                                 <label class="form-label">Product</label>
                                 <div class="form-line">
-                                    <select class="form-control show-tick" id="product_id" name="product_id" <?php echo isset($order_list[0]['product_id']) ? "disabled" : ""; ?> onchange="getmeasuredetails(this.value)">
+                                    <select class="form-control show-tick" id="product_id" name="product_id">
                                         <option value="">-- Please Select Product--</option>
                                         <?php
                                         foreach ($products_list as $plist) {
@@ -58,10 +58,7 @@
 
                                 </div>
                             </div>
-                            <div class="clearfix" id="measureval">                                
 
-                            </div>
-                            <br>
                             <div class="form-group form-float">
                                 <label class="form-label">Order Date</label>
                                 <div class="form-line">
@@ -72,6 +69,20 @@
                                 <label class="form-label">Delivery Date</label>
                                 <div class="form-line">
                                     <input type="text" name="deliverydate" id="deliverydate" class="datepicker form-control" placeholder="Please choose delivery date..." value="<?php echo isset($order_list[0]['deliverydate']) ? $order_list[0]['deliverydate'] : ''; ?>">                                   
+                                </div>
+                            </div>
+                            <div class="form-group form-float">
+                                <label class="form-label">Size</label>
+                                <div class="form-line">
+                                    <input type="text" class="form-control" name="psize" id="psize" value="<?php echo isset($order_list[0]['psize']) ? $order_list[0]['psize'] : ''; ?>" required>
+
+                                </div>
+                            </div>
+                            <div class="form-group form-float">
+                                <label class="form-label">Meter</label>
+                                <div class="form-line">
+                                    <input type="text" class="form-control" name="meter" id="meter" value="<?php echo isset($order_list[0]['meter']) ? $order_list[0]['meter'] : ''; ?>" required>
+
                                 </div>
                             </div>
                             <div class="form-group form-float">
@@ -96,7 +107,7 @@
                                 </div>
                             </div>
                             <div class="form-group form-float">
-                                <label class="form-label">Paid Amount</label>
+                                <label class="form-label">Advance Amount</label>
                                 <div class="form-line">
                                     <input type="text" class="form-control balanceamount" name="paid_amount" id="paid_amount" value="<?php echo isset($order_list[0]['paid_amount']) ? $order_list[0]['paid_amount'] : ''; ?>" required>
                                 </div>
@@ -107,8 +118,6 @@
                                     <input type="text" class="form-control" name="balance_amount" id="balance_amount" value="<?php echo isset($order_list[0]['balance_amount']) ? $order_list[0]['balance_amount'] : ''; ?>" disabled="" required>
                                 </div>
                             </div>
-                            
-
                             <a href="<?php echo base_url(); ?>companyorders" class="btn bg-blue-grey waves-effect" onclick="return confirm('Are you sure cancel the data?')">Cancel</a>
                             <button class="btn btn-primary waves-effect" type="submit">SUBMIT</button>
                         </form>
@@ -161,6 +170,14 @@
                                             product_id: {
                                                 required: true
                                             },
+                                            psize: {
+                                                required: true,
+                                                maxlength: 50,
+                                            },
+                                            meter: {
+                                                required: true,
+                                                maxlength: 100,
+                                            },
                                             price: {
                                                 required: true,
                                                 minlength: 2,
@@ -203,6 +220,14 @@
                                                 required: "Please choose product"
 
                                             },
+                                            psize: {
+                                                required: "Please enter size"
+
+                                            },
+                                            meter: {
+                                                required: "Please enter meter"
+
+                                            },
                                             price: {
                                                 required: "Please enter price"
 
@@ -216,7 +241,7 @@
 
                                             },
                                             paid_amount: {
-                                                required: "Please enter paid amount"
+                                                required: "Please enter advance amount"
 
                                             }
                                         },
@@ -246,24 +271,24 @@
                                         }
                                     });
                                 });
-                                var product_id = $("#product_id option:selected").val();
-                                getmeasuredetails(product_id);
-                                function getmeasuredetails(product_id)
-                                {
-                                    if (product_id != "")
-                                    {
-                                        $.ajax({
-                                            type: "POST",
-                                            url: "<?php echo base_url(); ?>companyorders/measurementdetails",
-                                            data: "product_id=" + product_id + "&order_id=" + "<?php echo $id; ?>",
-                                            async: false,
-                                            success:
-                                                    function (msg) {
-                                                        $("#measureval").html(msg);
-                                                    }
-                                        });
-                                    }
-                                }                                
+                                /*var product_id = $("#product_id option:selected").val();
+                                 getmeasuredetails(product_id);
+                                 function getmeasuredetails(product_id)
+                                 {
+                                 if (product_id != "")
+                                 {
+                                 $.ajax({
+                                 type: "POST",
+                                 url: "<?php echo base_url(); ?>companyorders/measurementdetails",
+                                 data: "product_id=" + product_id + "&order_id=" + "<?php echo $id; ?>",
+                                 async: false,
+                                 success:
+                                 function (msg) {
+                                 $("#measureval").html(msg);
+                                 }
+                                 });
+                                 }
+                                 }  */
                                 $(".totalamount").on("click blur change", function (event) {
                                     var totalamount = $("#price").val() * $("#quantity").val();
                                     $("#total_amount").val(totalamount);

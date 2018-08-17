@@ -62,15 +62,15 @@ class Companyorders extends CI_Controller {
             $tempD[] = $value['total_amount'];
             $tempD[] = $value['orderdate'];
             $tempD[] = $value['deliverydate'];
-            $tempD[] = $value['id'];           
-            $tempD["DT_RowId"] = md5($value['id']);           
+            $tempD[] = $value['id'];
+            $tempD["DT_RowId"] = md5($value['id']);
             // Row  PUSH
             $dataR['data'][] = $tempD;
         }
         echo json_encode($dataR);
         exit();
     }
-    
+
     public function add($id = NULL) {
         $order_list = array();
         $company_list = $this->company_model->lists();
@@ -119,6 +119,8 @@ class Companyorders extends CI_Controller {
                     'deliverydate' => trim($this->input->post('deliverydate')),
                     'quantity' => trim($this->input->post('quantity')),
                     'price' => trim($this->input->post('price')),
+                    'psize' => trim($this->input->post('psize')),
+                    'meter' => trim($this->input->post('meter')),
                     'total_amount' => $this->input->post('price') * $this->input->post('quantity'),
                     'paid_amount' => trim($this->input->post('paid_amount')),
                     'balance_amount' => ($this->input->post('price') * $this->input->post('quantity')) - $this->input->post('paid_amount')
@@ -139,6 +141,65 @@ class Companyorders extends CI_Controller {
                     echo json_encode(array('status' => 0, 'msg' => 'Order Details Saved Not Successfully'));
                 }
             }
+        }
+    }
+
+    public function deliverydetails($orderid) {
+        if ($orderid != "") {
+            $order_list = $this->orders_model->companyorderlists($orderid);
+
+            if (count($order_list) == 0) {
+                redirect(base_url() . 'companyorders', 'refresh');
+            }
+            $delivery_lists = $this->orders_model->companyorderdeliverylists(array('order_id' => $orderid));
+            $deliveryquantity = $this->orders_model->getdeliveryquantity($orderid);
+            $data = array('delivery_lists' => $delivery_lists, 'order_list' => $order_list,'deliveryquantity'=>$deliveryquantity);
+            $this->load->view('includes/header');
+            $this->load->view('includes/sidebar');
+            $this->load->view('companyorders/deliverylist', $data);
+            $this->load->view('includes/footer');
+        } else {
+            redirect(base_url() . 'companyorders', 'refresh');
+        }
+    }
+
+    public function ajaxsavedelivery() {
+        if (($this->input->server('REQUEST_METHOD') == 'POST')) {
+            $this->form_validation->set_rules('paiddate', 'Paid Date', 'trim|required');
+            $this->form_validation->set_rules('deliveryquantity', 'Now Delivering Quantity', 'trim|required|min_length[1]|max_length[10]');
+            if ($this->form_validation->run() == FALSE) {
+                echo json_encode(array('status' => 0, 'msg' => validation_errors()));
+                return false;
+            } else {
+                $data = array('order_id' => trim($this->input->post('order_id')),
+                    'deliveryquantity' => trim($this->input->post('deliveryquantity')),
+                    'paiddate' => trim($this->input->post('paiddate'))
+                );
+                if (isset($_POST['deliveryid']) && !empty($_POST['deliveryid'])) {
+                    $savedelivery = $this->orders_model->updatedeliveryquantity($data, $_POST['deliveryid']);
+                } else {
+                    $data['created_on'] = date('Y-m-d H:i:s');
+                    $savedelivery = $this->orders_model->savedeliveryquantity($data);
+                }
+                if ($savedelivery == 1) {
+                    $this->session->set_flashdata('SucMessage', 'Delivery Quantity Details Saved Successfully');
+                    echo json_encode(array('status' => 1));
+                } else {
+                    echo json_encode(array('status' => 0, 'msg' => 'Delivery Quantity Details Saved Not Successfully'));
+                }
+            }
+        }
+    }
+
+    public function getdeliverydetails() {
+        if (($this->input->server('REQUEST_METHOD') == 'POST')) {
+            $deliveryquantity = $this->orders_model->getdeliveryquantity(md5($_POST['orderid']));
+            $delivery_lists = $this->orders_model->getcompanyorderdeliverylists(array('id' => $_POST['deliveryid']));
+            echo json_encode(array('alreadydeliveryquantity' => isset($deliveryquantity[0]['totaldeliveryquanity']) ? $deliveryquantity[0]['totaldeliveryquanity'] : 0,
+                'paiddate' => isset($delivery_lists[0]['paiddate']) ? $delivery_lists[0]['paiddate'] : "",
+                'deliveryquantity' => isset($delivery_lists[0]['deliveryquantity']) ? $delivery_lists[0]['deliveryquantity'] : "",
+                'deliveryid' => isset($delivery_lists[0]['id']) ? $delivery_lists[0]['id'] : "",
+            ));
         }
     }
 
@@ -178,6 +239,20 @@ class Companyorders extends CI_Controller {
                 $this->session->set_flashdata('ErrorMessages', 'Order Details has not been deleted successfully!!!');
             }
             redirect(base_url() . 'companyorders', 'refresh');
+        } else {
+            redirect(base_url() . 'companyorders', 'refresh');
+        }
+    }
+    
+    public function deletedeliveryquantity($id = NULL,$order_id=NULL) {
+        if ($id != "") {
+            $deleteorder = $this->orders_model->deletedeliveryquantity($id);
+            if ($deleteorder == "1") {
+                $this->session->set_flashdata('SucMessage', 'Delivery Quantity Details has been deleted successfully!!!');
+            } else {
+                $this->session->set_flashdata('ErrorMessages', 'Delivery Quantity Details has not been deleted successfully!!!');
+            }
+            redirect(base_url() . 'companyorders/deliverydetails/'.$order_id, 'refresh');
         } else {
             redirect(base_url() . 'companyorders', 'refresh');
         }
@@ -225,27 +300,34 @@ class Companyorders extends CI_Controller {
                         <div class="col-md-6">
                             <div class="col-md-6"><label>Product Name</label></div><div class="col-md-6">' . $orders_list[0]['productname'] . '</div>
                         </div>
+                        <div class="col-md-6">
+                            <div class="col-md-6"><label>Size</label></div><div class="col-md-6">' . $orders_list[0]['psize'] . '</div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="col-md-6"><label>Meter</label></div><div class="col-md-6">' . $orders_list[0]['meter'] . '</div>
+                        </div>
                     </div>';
-                $typeresult = $this->orders_model->producttypeview();
-                if (count($typeresult)) {
-                    $html .= '<h4>Product Types</h4><div class="row">';
-                    foreach ($typeresult as $key => $value) {
+                /* $typeresult = $this->orders_model->producttypeview();
+                  if (count($typeresult)) {
+                  $html .= '<h4>Product Types</h4><div class="row">';
+                  foreach ($typeresult as $key => $value) {
 
-                        $html .= '<div class="col-md-6">' . $value['typename'] . '</div>';
-                    }
-                    $html .= '</div>';
-                }
-                $result = $this->orders_model->measurementvalues();
-                if (count($result)) {
-                    $html .= '<h4>Measurement Details</h4><div class="row">';
-                    foreach ($result as $key => $value) {
-                        $html .= '<div class="col-md-6"><div class="col-md-6"><label for="email_address">' . $value['mname'] . '</label></div><div class="col-md-6">' . $value['measurementvalue'] . '</div></div>';
-                    }
-                }
+                  $html .= '<div class="col-md-6">' . $value['typename'] . '</div>';
+                  }
+                  $html .= '</div>';
+                  }
+                  $result = $this->orders_model->measurementvalues();
+                  if (count($result)) {
+                  $html .= '<h4>Measurement Details</h4><div class="row">';
+                  foreach ($result as $key => $value) {
+                  $html .= '<div class="col-md-6"><div class="col-md-6"><label for="email_address">' . $value['mname'] . '</label></div><div class="col-md-6">' . $value['measurementvalue'] . '</div></div>';
+                  }
+                  } */
             }
             echo $html;
         }
     }
+
     public function printorder() {
         if (($this->input->server('REQUEST_METHOD') == 'GET')) {
 
@@ -253,9 +335,9 @@ class Companyorders extends CI_Controller {
             $html = "";
             $orders_list = $this->orders_model->companyorderlists($_POST['order_id']);
             $result = $this->orders_model->measurementvalues();
-            $typeresult = $this->orders_model->producttypeview();           
-            $this->load->view('customerorders/print', array('htmlcontent' => $html,'orders_list'=>$orders_list,'typeresult'=>$typeresult,'measurements'=>$result));
+            $typeresult = $this->orders_model->producttypeview();
+            $this->load->view('companyorders/print', array('htmlcontent' => $html, 'orders_list' => $orders_list, 'typeresult' => $typeresult, 'measurements' => $result));
         }
-    }    
+    }
 
 }

@@ -61,7 +61,7 @@ class Orders_model extends CI_Model {
         $this->db->where('orderdetails.dels', 0);
 
         if (isset($data['searchString']) && !empty($data['searchString'])) {
-            $searcharray = array(                
+            $searcharray = array(
                 'customers.name' => $data['searchString'],
                 'orderdetails.price' => $data['searchString'],
                 'orderdetails.quantity' => $data['searchString'],
@@ -75,14 +75,14 @@ class Orders_model extends CI_Model {
 
         $this->db->order_by($data['sortingcolumn'], $data['orderby']);
         $this->db->limit($data['end'], $data['start']);
-        $query = $this->db->get();        
+        $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result_array();
         } else {
             return array();
         }
     }
-    
+
     public function ajaxcustomerordercount($data) {
 
         $this->db->select('count(orderdetails.id) as totalcount');
@@ -93,7 +93,7 @@ class Orders_model extends CI_Model {
         $this->db->where('orderdetails.dels', 0);
 
         if (isset($data['searchString']) && !empty($data['searchString'])) {
-            $searcharray = array(                
+            $searcharray = array(
                 'customers.name' => $data['searchString'],
                 'orderdetails.price' => $data['searchString'],
                 'orderdetails.quantity' => $data['searchString'],
@@ -104,8 +104,8 @@ class Orders_model extends CI_Model {
             $this->db->like('orderdetails.orderno', $data['searchString']);
             $this->db->or_like($searcharray);
         }
-               
-        $query = $this->db->get();        
+
+        $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result_array();
         } else {
@@ -113,7 +113,6 @@ class Orders_model extends CI_Model {
         }
     }
 
-    
     public function ajaxcompanyorderlists($data) {
 
         $this->db->select('orderdetails.*,company.name,company.address,company.mobileno,products.productname');
@@ -124,7 +123,7 @@ class Orders_model extends CI_Model {
         $this->db->where('orderdetails.dels', 0);
 
         if (isset($data['searchString']) && !empty($data['searchString'])) {
-            $searcharray = array(                
+            $searcharray = array(
                 'customers.name' => $data['searchString'],
                 'orderdetails.price' => $data['searchString'],
                 'orderdetails.quantity' => $data['searchString'],
@@ -138,14 +137,14 @@ class Orders_model extends CI_Model {
 
         $this->db->order_by($data['sortingcolumn'], $data['orderby']);
         $this->db->limit($data['end'], $data['start']);
-        $query = $this->db->get();        
+        $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result_array();
         } else {
             return array();
         }
     }
-    
+
     public function ajaxcompanyordercount($data) {
 
         $this->db->select('count(orderdetails.id) as totalcount');
@@ -156,7 +155,7 @@ class Orders_model extends CI_Model {
         $this->db->where('orderdetails.dels', 0);
 
         if (isset($data['searchString']) && !empty($data['searchString'])) {
-            $searcharray = array(                
+            $searcharray = array(
                 'customers.name' => $data['searchString'],
                 'orderdetails.price' => $data['searchString'],
                 'orderdetails.quantity' => $data['searchString'],
@@ -167,15 +166,15 @@ class Orders_model extends CI_Model {
             $this->db->like('orderdetails.orderno', $data['searchString']);
             $this->db->or_like($searcharray);
         }
-               
-        $query = $this->db->get();        
+
+        $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result_array();
         } else {
             return array();
         }
     }
-    
+
     public function measurementlists($wheredata) {
 
         $this->db->select('*');
@@ -385,6 +384,74 @@ class Orders_model extends CI_Model {
         } else {
             return array();
         }
+    }
+
+    public function companyorderdeliverylists($data) {
+
+        $this->db->select('*');
+        $this->db->from('companydeliverydetails');
+        if (isset($data['order_id']) && !empty($data['order_id'])) {
+            $this->db->where('md5(companydeliverydetails.order_id)', $data['order_id']);
+        }
+        $this->db->where('companydeliverydetails.dels', 0);
+        $this->db->order_by('companydeliverydetails.id', 'desc');
+        $query = $this->db->get();
+
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
+        } else {
+            return array();
+        }
+    }
+
+    public function getcompanyorderdeliverylists($data) {
+        $result = array();
+        if (isset($data['id']) && !empty($data['id'])) {
+            $this->db->select('*');
+            $this->db->from('companydeliverydetails');
+            $this->db->where('md5(companydeliverydetails.id)', $data['id']);
+            $this->db->where('companydeliverydetails.dels', 0);
+            $this->db->order_by('companydeliverydetails.id', 'desc');
+            $query = $this->db->get();
+
+            if ($query->num_rows() > 0) {
+                $result = $query->result_array();
+            }
+        }
+        return $result;
+    }
+
+    public function getdeliveryquantity($orderid) {
+        $result = array();
+        if (!empty($orderid)) {
+            $this->db->select('sum(deliveryquantity) as totaldeliveryquanity');
+            $this->db->from('companydeliverydetails');
+            $this->db->where('md5(companydeliverydetails.order_id)', $orderid);
+            $this->db->where('companydeliverydetails.dels', 0);
+            $query = $this->db->get();
+
+            if ($query->num_rows() > 0) {
+                $result = $query->result_array();
+            }
+        }
+        return $result;
+    }
+
+    public function savedeliveryquantity($set_data) {
+        $this->db->insert('companydeliverydetails', $set_data);
+        return ($this->db->affected_rows() > 0);
+    }
+
+    public function updatedeliveryquantity($set_data, $id) {
+        $this->db->where('id', $id);
+        $this->db->update("companydeliverydetails", $set_data);
+        return 1;
+    }
+
+    public function deletedeliveryquantity($id) {
+        $this->db->where('md5(id)', $id);
+        $this->db->delete("companydeliverydetails");
+        return ($this->db->affected_rows() > 0);
     }
 
 }
