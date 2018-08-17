@@ -22,6 +22,14 @@ class Reports extends CI_Controller {
 
     public function company() {
         //echo "<pre>".print_r($_POST);die;
+        
+        if (!isset($_POST['fromdate']) && empty($_POST['fromdate'])) {
+            $_POST['fromdate']=date('Y-m-d');
+        }
+        if (!isset($_POST['todate']) && empty($_POST['todate'])) {
+            $_POST['todate']=date('Y-m-d');
+        }
+        
         $orders_lists = $this->orders_model->companyreport();
         $list= $this->company_model->lists();
         $company_list=array();
@@ -37,6 +45,12 @@ class Reports extends CI_Controller {
     }
 
     public function customer() {
+        if (!isset($_POST['fromdate']) && empty($_POST['fromdate'])) {
+            $_POST['fromdate']=date('Y-m-d');
+        }
+        if (!isset($_POST['todate']) && empty($_POST['todate'])) {
+            $_POST['todate']=date('Y-m-d');
+        }
         $orders_lists = $this->orders_model->customerreport();        
         $data = array('orders_lists' => $orders_lists);
         $this->load->view('includes/header');
