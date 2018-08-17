@@ -124,6 +124,7 @@ class Customerorders extends CI_Controller {
                 );
 
                 if ($id != "") {
+                    $data['updated_on'] = date('Y-m-d H:i:s');
                     $saveorder = $this->orders_model->update($data, $id);
                     $savemeasurement = $this->orders_model->updatemeasurementvalues($orders_list[0]['id']);
                     $savetype = $this->orders_model->updatetypevalues($orders_list[0]['id']);

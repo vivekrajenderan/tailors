@@ -65,3 +65,5 @@ ALTER TABLE `companydeliverydetails`
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 
 ALTER TABLE `orderdetails` ADD `psize` VARCHAR(100) NOT NULL AFTER `paid_amount`, ADD `meter` VARCHAR(100) NOT NULL AFTER `psize`, ADD `orderstatus` ENUM('open','delivered') NOT NULL DEFAULT 'open' AFTER `meter`; 
+
+ALTER TABLE `orderdetails` ADD `updated_on` DATETIME NULL AFTER `created_on`; 
