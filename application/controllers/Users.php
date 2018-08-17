@@ -17,7 +17,7 @@ class Users extends CI_Controller {
 
     public function index() {
         if ($this->session->userdata('role') == 2) {
-            redirect(base_url() . 'company/', 'refresh');
+            redirect(base_url() . 'customer/', 'refresh');
         }
         $users_lists = $this->users_model->lists();
         $data = array('users_lists' => $users_lists);
@@ -29,7 +29,7 @@ class Users extends CI_Controller {
 
     public function add($id = NULL) {
         if ($this->session->userdata('role') == 2) {
-            redirect(base_url() . 'company/', 'refresh');
+            redirect(base_url() . 'customer/', 'refresh');
         }
         $users_list = array();
         if ($id != "") {

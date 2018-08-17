@@ -12,7 +12,7 @@ class Products extends CI_Controller {
         if ($this->session->userdata('logged_in') == False) {
             redirect(base_url() . 'login/', 'refresh');
         } else if ($this->session->userdata('role') == 2) {
-            redirect(base_url() . 'company/', 'refresh');
+            redirect(base_url() . 'customer/', 'refresh');
         }
     }
 

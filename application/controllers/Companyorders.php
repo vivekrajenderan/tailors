@@ -153,7 +153,7 @@ class Companyorders extends CI_Controller {
             }
             $delivery_lists = $this->orders_model->companyorderdeliverylists(array('order_id' => $orderid));
             $deliveryquantity = $this->orders_model->getdeliveryquantity($orderid);
-            $data = array('delivery_lists' => $delivery_lists, 'order_list' => $order_list,'deliveryquantity'=>$deliveryquantity);
+            $data = array('delivery_lists' => $delivery_lists, 'order_list' => $order_list, 'deliveryquantity' => $deliveryquantity);
             $this->load->view('includes/header');
             $this->load->view('includes/sidebar');
             $this->load->view('companyorders/deliverylist', $data);
@@ -165,7 +165,7 @@ class Companyorders extends CI_Controller {
 
     public function ajaxsavedelivery() {
         if (($this->input->server('REQUEST_METHOD') == 'POST')) {
-            $this->form_validation->set_rules('paiddate', 'Paid Date', 'trim|required');
+            $this->form_validation->set_rules('paiddate', 'Delivery Date', 'trim|required');
             $this->form_validation->set_rules('deliveryquantity', 'Now Delivering Quantity', 'trim|required|min_length[1]|max_length[10]');
             if ($this->form_validation->run() == FALSE) {
                 echo json_encode(array('status' => 0, 'msg' => validation_errors()));
@@ -195,7 +195,12 @@ class Companyorders extends CI_Controller {
         if (($this->input->server('REQUEST_METHOD') == 'POST')) {
             $deliveryquantity = $this->orders_model->getdeliveryquantity(md5($_POST['orderid']));
             $delivery_lists = $this->orders_model->getcompanyorderdeliverylists(array('id' => $_POST['deliveryid']));
-            echo json_encode(array('alreadydeliveryquantity' => isset($deliveryquantity[0]['totaldeliveryquanity']) ? $deliveryquantity[0]['totaldeliveryquanity'] : 0,
+            $alreadydeliveryquantity = isset($deliveryquantity[0]['totaldeliveryquanity']) ? $deliveryquantity[0]['totaldeliveryquanity'] : 0;
+            if (isset($_POST['deliveryid']) && !empty($_POST['deliveryid'])) {                
+                $alreadydeliveryquantity = (int)(isset($deliveryquantity[0]['totaldeliveryquanity']) ? $deliveryquantity[0]['totaldeliveryquanity']:0) - (int)(isset($delivery_lists[0]['deliveryquantity']) ? (int)$delivery_lists[0]['deliveryquantity'] : 0);
+            }
+
+            echo json_encode(array('alreadydeliveryquantity' => $alreadydeliveryquantity,
                 'paiddate' => isset($delivery_lists[0]['paiddate']) ? $delivery_lists[0]['paiddate'] : "",
                 'deliveryquantity' => isset($delivery_lists[0]['deliveryquantity']) ? $delivery_lists[0]['deliveryquantity'] : "",
                 'deliveryid' => isset($delivery_lists[0]['id']) ? $delivery_lists[0]['id'] : "",
@@ -243,8 +248,8 @@ class Companyorders extends CI_Controller {
             redirect(base_url() . 'companyorders', 'refresh');
         }
     }
-    
-    public function deletedeliveryquantity($id = NULL,$order_id=NULL) {
+
+    public function deletedeliveryquantity($id = NULL, $order_id = NULL) {
         if ($id != "") {
             $deleteorder = $this->orders_model->deletedeliveryquantity($id);
             if ($deleteorder == "1") {
@@ -252,7 +257,7 @@ class Companyorders extends CI_Controller {
             } else {
                 $this->session->set_flashdata('ErrorMessages', 'Delivery Quantity Details has not been deleted successfully!!!');
             }
-            redirect(base_url() . 'companyorders/deliverydetails/'.$order_id, 'refresh');
+            redirect(base_url() . 'companyorders/deliverydetails/' . $order_id, 'refresh');
         } else {
             redirect(base_url() . 'companyorders', 'refresh');
         }

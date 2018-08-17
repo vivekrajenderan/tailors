@@ -120,27 +120,15 @@
                             <i class="material-icons">text_fields</i>
                             <span>Staff Balance</span>
                         </a>
-                    </li>
-                    <li>
-                        <a href="<?php echo base_url() . 'company'; ?>">
-                            <i class="material-icons">text_fields</i>
-                            <span>Company</span>
-                        </a>
-                    </li>
-                    <li>
+                    </li>                    
+                    <li class="active">
                         <a href="<?php echo base_url() . 'customer'; ?>">
                             <i class="material-icons">text_fields</i>
                             <span>Customer</span>
                         </a>
-                    </li>
-                    <li class="active">
-                        <a href="<?php echo base_url() . 'Companyorders'; ?>">
-                            <i class="material-icons">layers</i>
-                            <span>Company Orders</span>
-                        </a>
-                    </li>                
+                    </li>                                   
                     <li>
-                        <a href="<?php echo base_url() . 'Customerorders'; ?>">
+                        <a href="<?php echo base_url() . 'customerorders'; ?>">
                             <i class="material-icons">layers</i>
                             <span>Customer Orders</span>
                         </a>

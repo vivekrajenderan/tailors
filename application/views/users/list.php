@@ -59,19 +59,24 @@
                                     </tr>
                                 </tfoot>
                                 <tbody>
-                                    <?php foreach ($users_lists as $key => $lists) { ?>
-                                        <tr>
-                                            <td><?php echo isset($lists['firstname']) ? $lists['firstname'] . " " . $lists['lastname'] : ""; ?></td>
-                                            <td><?php echo isset($lists['username']) ? $lists['username'] : ""; ?></td>
-                                            <td><?php echo isset($lists['address']) ? $lists['address'] : ""; ?></td>
-                                            <td><?php echo isset($lists['mobileno']) ? $lists['mobileno'] : ""; ?></td>
-                                            <td><?php echo isset($lists['gender']) ? ucfirst($lists['gender']) : ""; ?></td>
-                                            <td>
-                                                <a href="<?php echo base_url() . 'users/add/' . md5($lists['id']); ?>" title="Edit" ><i class="material-icons" style="font-size: 20px;">edit</i></a>&nbsp;<a href="<?php echo base_url() . 'users/delete/' . md5($lists['id']); ?>" title="Delete"><i class="material-icons" style="font-size: 20px;">delete</i></a>
-                                            </td>                                        
+                                    <?php
+                                    foreach ($users_lists as $key => $lists) {
+                                        if ($lists['role'] == 2) {
+                                            ?>
+                                            <tr>
+                                                <td><?php echo isset($lists['firstname']) ? $lists['firstname'] . " " . $lists['lastname'] : ""; ?></td>
+                                                <td><?php echo isset($lists['username']) ? $lists['username'] : ""; ?></td>
+                                                <td><?php echo isset($lists['address']) ? $lists['address'] : ""; ?></td>
+                                                <td><?php echo isset($lists['mobileno']) ? $lists['mobileno'] : ""; ?></td>
+                                                <td><?php echo isset($lists['gender']) ? ucfirst($lists['gender']) : ""; ?></td>
+                                                <td>
+                                                    <a href="<?php echo base_url() . 'users/add/' . md5($lists['id']); ?>" title="Edit" ><i class="material-icons" style="font-size: 20px;">edit</i></a>&nbsp;<a href="<?php echo base_url() . 'users/delete/' . md5($lists['id']); ?>" title="Delete"><i class="material-icons" style="font-size: 20px;">delete</i></a>
+                                                </td>                                        
 
-                                        </tr>       
-                                    <?php } ?>
+                                            </tr>       
+                                                <?php }
+                                            }
+                                            ?>
                                 </tbody>
                             </table>
                         </div>

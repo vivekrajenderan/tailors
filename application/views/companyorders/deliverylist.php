@@ -16,11 +16,22 @@
                                     Company Delivery Details (<?php echo isset($order_list[0]['orderno']) ? $order_list[0]['orderno'] : ""; ?>)
                                 </h2>
                                 <h6>Total Quanity : <?php echo isset($order_list[0]['quantity']) ? $order_list[0]['quantity'] : ""; ?></h6>
-                                <h6>Already Delivered Quanity : <?php echo isset($deliveryquantity[0]['totaldeliveryquanity']) ? $deliveryquantity[0]['totaldeliveryquanity'] : ""; ?></h6>
+                                <h6>Already Delivered Quanity : <?php echo isset($deliveryquantity[0]['totaldeliveryquanity']) ? $deliveryquantity[0]['totaldeliveryquanity'] : 0; ?></h6>
                             </div>
+
                             <div class="col-md-6 col-xs-4">
-                                <div class="pull-right"><button onclick="return deliverydetails('<?php echo isset($order_list[0]['id']) ? $order_list[0]['id'] : ""; ?>', '')" type="button" class="btn bg-cyan waves-effect">Add Delivery Quantity</button></div>
+                                <div class="pull-right">
+                                <?php
+                                $alqty = isset($deliveryquantity[0]['totaldeliveryquanity']) ? $deliveryquantity[0]['totaldeliveryquanity'] : 0;
+                                $totqty = isset($order_list[0]['quantity']) ? $order_list[0]['quantity'] : 0;
+                                if ($alqty < $totqty) {
+                                    ?>
+                                    <button onclick="return deliverydetails('<?php echo isset($order_list[0]['id']) ? $order_list[0]['id'] : ""; ?>', '')" type="button" class="btn bg-cyan waves-effect">Add Delivery Quantity</button>
+                                <?php } ?>
+                                <button onclick="location.href = '<?php echo base_url() . "companyorders"; ?>';" type="button" class="btn bg-light-blue waves-effect">Company Order List</button></div>
+
                             </div>
+
                         </div>
                     </div>
                     <div class="body">
@@ -43,7 +54,7 @@
                                 <thead>
                                     <tr>              
                                         <th>Delivery Quantity</th>  
-                                        <th>Paid On</th>
+                                        <th>Delivery On</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -57,7 +68,7 @@
                                                 <td><?php echo isset($lists['deliveryquantity']) ? $lists['deliveryquantity'] : ""; ?></td>    
                                                 <td><?php echo isset($lists['paiddate']) ? $lists['paiddate'] : ""; ?></td>                                                
                                                 <td>
-                                                    <a href="javascript:void(0);" title="Edit" onclick="return deliverydetails('<?php echo isset($order_list[0]['id']) ? $order_list[0]['id'] : ""; ?>', '<?php echo md5($lists['id']); ?>')"><i class="material-icons" style="font-size: 18px;">edit</i></a>&nbsp;<a href="<?php echo base_url() . 'companyorders/deletedeliveryquantity/' . md5($lists['id']).'/'.md5($lists['order_id']); ?>" onclick="return confirm('Are you sure delete the data?')" title="Delete"><i class="material-icons" style="font-size: 18px;">delete</i></a>
+                                                    <a href="javascript:void(0);" title="Edit" onclick="return deliverydetails('<?php echo isset($order_list[0]['id']) ? $order_list[0]['id'] : ""; ?>', '<?php echo md5($lists['id']); ?>')"><i class="material-icons" style="font-size: 18px;">edit</i></a>&nbsp;<a href="<?php echo base_url() . 'companyorders/deletedeliveryquantity/' . md5($lists['id']) . '/' . md5($lists['order_id']); ?>" onclick="return confirm('Are you sure delete the data?')" title="Delete"><i class="material-icons" style="font-size: 18px;">delete</i></a>
 
                                                 </td>                                        
 
@@ -93,7 +104,7 @@
                         <input type="hidden" name="deliveryid" id="deliveryid">
                         <input type="hidden" name="order_id" id="order_id" value="<?php echo isset($order_list[0]['id']) ? $order_list[0]['id'] : ''; ?>">
                         <div class="form-group form-float">
-                            <label class="form-label">Paid Date</label>
+                            <label class="form-label">Delivery Date</label>
                             <div class="form-line">
                                 <input type="text" name="paiddate" id="paiddate" class="datepicker form-control" placeholder="Please choose paid date..." value="">                                   
                             </div>
@@ -191,7 +202,7 @@
             },
             messages: {
                 paiddate: {
-                    required: "Please choose Paid Date"
+                    required: "Please choose Delivery Date"
 
                 },
                 deliveryquantity: {
@@ -227,15 +238,8 @@
             {
                 var alreadyquantity = $('#alreadydeliveryquantity').val();
                 var totalquantity = $('#totalquantity').val();
-                var sumquantity = 0;
-                var deliveryid = $("#deliveryid").val();
-                if (deliveryid != "")
-                {
-                    sumquantity = parseInt(alreadyquantity) - parseInt(value);
-                } else
-                {
-                    sumquantity = parseInt(alreadyquantity) + parseInt(value);
-                }
+                var sumquantity = parseInt(alreadyquantity) + parseInt(value);
+
                 console.log(alreadyquantity + "-" + totalquantity + "-" + sumquantity);
                 if (sumquantity <= totalquantity)
                 {
