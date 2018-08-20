@@ -288,15 +288,47 @@ class Users extends CI_Controller {
                 }
                 if ($saveusers == 1) {
                     $this->session->set_userdata('firstname', $this->input->post('firstname'));
-                    $this->session->set_userdata('lastname', $this->input->post('lastname'));                    
-                    if(isset($data['userimage']) && !empty($data['userimage']))
-                    {
+                    $this->session->set_userdata('lastname', $this->input->post('lastname'));
+                    if (isset($data['userimage']) && !empty($data['userimage'])) {
                         $this->session->set_userdata('userimage', $data['userimage']);
                     }
                     $this->session->set_flashdata('SucMessage', 'Profile Saved Successfully');
                     echo json_encode(array('status' => 1));
                 } else {
                     echo json_encode(array('status' => 0, 'msg' => 'Profile Saved Not Successfully'));
+                }
+            }
+        }
+    }
+
+    public function changepassword() {
+        $this->load->view('includes/header');
+        $this->load->view('includes/sidebar');
+        $this->load->view('users/changepassword');
+        $this->load->view('includes/footer');
+    }
+
+    public function ajaxchangepassword() {
+
+
+        if (($this->input->server('REQUEST_METHOD') == 'POST')) {
+            $this->form_validation->set_rules('newpassword', 'New Password', 'trim|required|min_length[3]|max_length[150]');
+            $this->form_validation->set_rules('confirmpassword', 'Confirm Password', 'trim|required|min_length[3]|max_length[150]');
+
+            if ($this->form_validation->run() == FALSE) {
+                echo json_encode(array('status' => 0, 'msg' => validation_errors()));
+                return false;
+            } else {
+                $data = array('password' => AES_Encode(trim($this->input->post('newpassword'))));
+                if ($this->session->userdata('id')) {
+                    $data['updated_on'] = date('Y-m-d H:i:s');
+                    $saveusers = $this->users_model->update($data, md5($this->session->userdata('id')));
+                }
+                if ($saveusers == 1) {                    
+                    $this->session->set_flashdata('SucMessage', 'New Password has been updated Successfully');
+                    echo json_encode(array('status' => 1));
+                } else {
+                    echo json_encode(array('status' => 0, 'msg' => 'New Password has not been updated Successfully'));
                 }
             }
         }
