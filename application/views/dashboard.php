@@ -94,9 +94,9 @@
                                     } else {
                                         ?>
                                         <tr>
-
+                                            <td colspan="6" align="center">No Records</td>
                                         </tr> 
-<?php } ?>
+                                    <?php } ?>
                                 </tbody>
                             </table>
                         </div>
@@ -168,9 +168,9 @@
                                     } else {
                                         ?>
                                         <tr>
-
+                                            <td colspan="6" align="center">No Records</td>
                                         </tr> 
-<?php } ?>
+                                    <?php } ?>
                                 </tbody>
                             </table>
                         </div>
