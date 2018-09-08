@@ -34,9 +34,12 @@ class Customerorders extends CI_Controller {
         $pagecolumn = isset($_REQUEST['order'][0]['column']) ? $_REQUEST['order'][0]['column'] : 0;
         $pageorder = isset($_REQUEST['order'][0]['dir']) ? $_REQUEST['order'][0]['dir'] : 'desc';
         $searchvalue = isset($_REQUEST['search']['value']) ? $_REQUEST['search']['value'] : "";
-        $sortingcolumn = 'orderno';
+        $sortingcolumn = 'orderdetails.id';
         if (isset($ordercolumn[$pagecolumn])) {
             $sortingcolumn = $ordercolumn[$pagecolumn];
+            if ($sortingcolumn == 'orderdetails.orderno') {
+                $sortingcolumn= 'orderdetails.id';
+            }
         }
         $data = array('sortingcolumn' => $sortingcolumn, 'orderby' => $pageorder, 'searchString' => $searchvalue, 'start' => $start, 'end' => $end);
         $orders_lists = $this->orders_model->ajaxcustomerorderlists($data);

@@ -16,7 +16,7 @@ class Companyorders extends CI_Controller {
         }
     }
 
-    public function index() {        
+    public function index() {
         $this->load->view('includes/header');
         $this->load->view('includes/sidebar');
         $this->load->view('companyorders/list');
@@ -32,15 +32,17 @@ class Companyorders extends CI_Controller {
         $pagecolumn = isset($_REQUEST['order'][0]['column']) ? $_REQUEST['order'][0]['column'] : 0;
         $pageorder = isset($_REQUEST['order'][0]['dir']) ? $_REQUEST['order'][0]['dir'] : 'desc';
         $searchvalue = isset($_REQUEST['search']['value']) ? $_REQUEST['search']['value'] : "";
-        $sortingcolumn = 'orderno';
+        $sortingcolumn = 'orderdetails.id';
         if (isset($ordercolumn[$pagecolumn])) {
             $sortingcolumn = $ordercolumn[$pagecolumn];
+            if ($sortingcolumn == 'orderdetails.orderno') {
+                $sortingcolumn= 'orderdetails.id';
+            }
         }
         $data = array('sortingcolumn' => $sortingcolumn, 'orderby' => $pageorder, 'searchString' => $searchvalue, 'start' => $start, 'end' => $end);
         $orders_lists = $this->orders_model->ajaxcompanyorderlists($data);
         $orders_count = $this->orders_model->ajaxcompanyordercount($data);
-        //echo "<pre>" . print_r($orders_count);
-        //die;
+        
         $pcount = 0;
         if (isset($orders_count[0]['totalcount']) && !empty($orders_count[0]['totalcount']))
             $pcount = ($orders_count[0]['totalcount']);
@@ -170,9 +172,9 @@ class Companyorders extends CI_Controller {
                 echo json_encode(array('status' => 0, 'msg' => validation_errors()));
                 return false;
             } else {
-                
-                
-                
+
+
+
                 $data = array('order_id' => trim($this->input->post('order_id')),
                     'deliveryquantity' => trim($this->input->post('deliveryquantity')),
                     'paiddate' => trim($this->input->post('paiddate'))
@@ -184,18 +186,15 @@ class Companyorders extends CI_Controller {
                     $savedelivery = $this->orders_model->savedeliveryquantity($data);
                 }
                 $orders_list = $this->orders_model->companyorderlists(md5($this->input->post('order_id')));
-                $totalquantity=(isset($orders_list[0]['quantity']))?$orders_list[0]['quantity']:0;
+                $totalquantity = (isset($orders_list[0]['quantity'])) ? $orders_list[0]['quantity'] : 0;
                 $deliverylist = $this->orders_model->getdeliveryquantity(md5($this->input->post('order_id')));
-                $deliveryquantity=(isset($deliverylist[0]['totaldeliveryquanity']))?$deliverylist[0]['totaldeliveryquanity']:0;                
-                if($totalquantity==$deliveryquantity)
-                {
-                    $this->orders_model->update(array('orderstatus'=>'delivered'), md5($this->input->post('order_id')));
+                $deliveryquantity = (isset($deliverylist[0]['totaldeliveryquanity'])) ? $deliverylist[0]['totaldeliveryquanity'] : 0;
+                if ($totalquantity == $deliveryquantity) {
+                    $this->orders_model->update(array('orderstatus' => 'delivered'), md5($this->input->post('order_id')));
+                } else {
+                    $this->orders_model->update(array('orderstatus' => 'inprogress'), md5($this->input->post('order_id')));
                 }
-                else
-                {
-                    $this->orders_model->update(array('orderstatus'=>'inprogress'), md5($this->input->post('order_id')));
-                }
-                
+
                 if ($savedelivery == 1) {
                     $this->session->set_flashdata('SucMessage', 'Delivery Quantity Details Saved Successfully');
                     echo json_encode(array('status' => 1));
@@ -211,8 +210,8 @@ class Companyorders extends CI_Controller {
             $deliveryquantity = $this->orders_model->getdeliveryquantity(md5($_POST['orderid']));
             $delivery_lists = $this->orders_model->getcompanyorderdeliverylists(array('id' => $_POST['deliveryid']));
             $alreadydeliveryquantity = isset($deliveryquantity[0]['totaldeliveryquanity']) ? $deliveryquantity[0]['totaldeliveryquanity'] : 0;
-            if (isset($_POST['deliveryid']) && !empty($_POST['deliveryid'])) {                
-                $alreadydeliveryquantity = (int)(isset($deliveryquantity[0]['totaldeliveryquanity']) ? $deliveryquantity[0]['totaldeliveryquanity']:0) - (int)(isset($delivery_lists[0]['deliveryquantity']) ? (int)$delivery_lists[0]['deliveryquantity'] : 0);
+            if (isset($_POST['deliveryid']) && !empty($_POST['deliveryid'])) {
+                $alreadydeliveryquantity = (int) (isset($deliveryquantity[0]['totaldeliveryquanity']) ? $deliveryquantity[0]['totaldeliveryquanity'] : 0) - (int) (isset($delivery_lists[0]['deliveryquantity']) ? (int) $delivery_lists[0]['deliveryquantity'] : 0);
             }
 
             echo json_encode(array('alreadydeliveryquantity' => $alreadydeliveryquantity,
