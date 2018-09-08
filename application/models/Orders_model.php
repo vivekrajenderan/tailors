@@ -33,7 +33,7 @@ class Orders_model extends CI_Model {
         }
     }
 
-    public function customerorderlists($id = NULL,$data = array()) {
+    public function customerorderlists($id = NULL, $data = array()) {
 
         $this->db->select('orderdetails.*,customers.name,customers.address,customers.mobileno,products.productname');
         $this->db->from('orderdetails');
@@ -67,16 +67,14 @@ class Orders_model extends CI_Model {
         $this->db->where('orderdetails.dels', 0);
 
         if (isset($data['searchString']) && !empty($data['searchString'])) {
-            $searcharray = array(
-                'customers.name' => $data['searchString'],
-                'orderdetails.price' => $data['searchString'],
-                'orderdetails.quantity' => $data['searchString'],
-                'orderdetails.total_amount' => $data['searchString'],
-                'orderdetails.orderdate' => $data['searchString'],
-                'orderdetails.deliverydate' => $data['searchString']
-            );
-            $this->db->like('orderdetails.orderno', $data['searchString']);
-            $this->db->or_like($searcharray);
+            $this->db->group_start();
+            $this->db->or_like('customers.name', $data['searchString']);
+            $this->db->or_like('orderdetails.price', $data['searchString']);
+            $this->db->or_like('orderdetails.quantity', $data['searchString']);
+            $this->db->or_like('orderdetails.total_amount', $data['searchString']);
+            $this->db->or_like('orderdetails.orderdate', $data['searchString']);
+            $this->db->or_like('orderdetails.deliverydate', $data['searchString']);
+            $this->db->group_end();
         }
 
         $this->db->order_by($data['sortingcolumn'], $data['orderby']);
@@ -99,16 +97,14 @@ class Orders_model extends CI_Model {
         $this->db->where('orderdetails.dels', 0);
 
         if (isset($data['searchString']) && !empty($data['searchString'])) {
-            $searcharray = array(
-                'customers.name' => $data['searchString'],
-                'orderdetails.price' => $data['searchString'],
-                'orderdetails.quantity' => $data['searchString'],
-                'orderdetails.total_amount' => $data['searchString'],
-                'orderdetails.orderdate' => $data['searchString'],
-                'orderdetails.deliverydate' => $data['searchString']
-            );
-            $this->db->like('orderdetails.orderno', $data['searchString']);
-            $this->db->or_like($searcharray);
+            $this->db->group_start();
+            $this->db->or_like('customers.name', $data['searchString']);
+            $this->db->or_like('orderdetails.price', $data['searchString']);
+            $this->db->or_like('orderdetails.quantity', $data['searchString']);
+            $this->db->or_like('orderdetails.total_amount', $data['searchString']);
+            $this->db->or_like('orderdetails.orderdate', $data['searchString']);
+            $this->db->or_like('orderdetails.deliverydate', $data['searchString']);
+            $this->db->group_end();
         }
 
         $query = $this->db->get();
@@ -129,21 +125,19 @@ class Orders_model extends CI_Model {
         $this->db->where('orderdetails.dels', 0);
 
         if (isset($data['searchString']) && !empty($data['searchString'])) {
-            $searcharray = array(
-                'customers.name' => $data['searchString'],
-                'orderdetails.price' => $data['searchString'],
-                'orderdetails.quantity' => $data['searchString'],
-                'orderdetails.total_amount' => $data['searchString'],
-                'orderdetails.orderdate' => $data['searchString'],
-                'orderdetails.deliverydate' => $data['searchString']
-            );
-            $this->db->like('orderdetails.orderno', $data['searchString']);
-            $this->db->or_like($searcharray);
+            $this->db->group_start();
+            $this->db->or_like('company.name', $data['searchString']);
+            $this->db->or_like('orderdetails.price', $data['searchString']);
+            $this->db->or_like('orderdetails.quantity', $data['searchString']);
+            $this->db->or_like('orderdetails.total_amount', $data['searchString']);
+            $this->db->or_like('orderdetails.orderdate', $data['searchString']);
+            $this->db->or_like('orderdetails.orderstatus', $data['searchString']);
+            $this->db->group_end();
         }
 
         $this->db->order_by($data['sortingcolumn'], $data['orderby']);
         $this->db->limit($data['end'], $data['start']);
-        $query = $this->db->get();
+        $query = $this->db->get();       
         if ($query->num_rows() > 0) {
             return $query->result_array();
         } else {
@@ -161,16 +155,13 @@ class Orders_model extends CI_Model {
         $this->db->where('orderdetails.dels', 0);
 
         if (isset($data['searchString']) && !empty($data['searchString'])) {
-            $searcharray = array(
-                'customers.name' => $data['searchString'],
-                'orderdetails.price' => $data['searchString'],
-                'orderdetails.quantity' => $data['searchString'],
-                'orderdetails.total_amount' => $data['searchString'],
-                'orderdetails.orderdate' => $data['searchString'],
-                'orderdetails.deliverydate' => $data['searchString']
-            );
-            $this->db->like('orderdetails.orderno', $data['searchString']);
-            $this->db->or_like($searcharray);
+            $this->db->group_start();
+            $this->db->or_like('company.name', $data['searchString']);
+            $this->db->or_like('orderdetails.price', $data['searchString']);
+            $this->db->or_like('orderdetails.quantity', $data['searchString']);
+            $this->db->or_like('orderdetails.total_amount', $data['searchString']);
+            $this->db->or_like('orderdetails.orderstatus', $data['searchString']);
+            $this->db->group_end();
         }
 
         $query = $this->db->get();
@@ -382,6 +373,62 @@ class Orders_model extends CI_Model {
         }
         if (isset($_POST['user_id']) && !empty($_POST['user_id']) && isset($_POST['username']) && !empty($_POST['username'])) {
             $this->db->where('users.id', $_POST['user_id']);
+        }
+        $this->db->where('staffbalance.dels', 0);
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
+        } else {
+            return array();
+        }
+    }
+
+    public function ajaxstaffreport($data) {
+
+        $this->db->select('staffbalance.*,users.firstname,users.lastname,users.mobileno');
+        $this->db->from('staffbalance');
+        $this->db->join('users', 'staffbalance.user_id = users.id');
+        if (isset($data['searchString']) && !empty($data['searchString'])) {
+            $querystring = "(staffbalance.buydate LIKE '%" . $data['searchString'] . "%' OR staffbalance.amount LIKE '%" . $data['searchString'] . "%' OR users.firstname LIKE '%" . $data['searchString'] . "%'  OR users.lastname LIKE '%" . $data['searchString'] . "%' OR users.mobileno LIKE '%" . $data['searchString'] . "%')";
+            $this->db->where($querystring);
+        }
+        if (isset($data['fromdate']) && !empty($data['fromdate'])) {
+            $this->db->where('staffbalance.buydate >=', $data['fromdate']);
+        }
+        if (isset($data['todate']) && !empty($data['todate'])) {
+            $this->db->where('staffbalance.buydate <=', $data['todate']);
+        }
+        if (isset($data['user_id']) && !empty($data['user_id']) && isset($data['username']) && !empty($data['username'])) {
+            $this->db->where('users.id', $data['user_id']);
+        }
+        $this->db->where('staffbalance.dels', 0);
+        $this->db->order_by($data['sortingcolumn'], $data['orderby']);
+        $this->db->limit($data['end'], $data['start']);
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
+        } else {
+            return array();
+        }
+    }
+
+    public function ajaxstaffreportcount($data) {
+
+        $this->db->select('count(staffbalance.id) as totalcount');
+        $this->db->from('staffbalance');
+        $this->db->join('users', 'staffbalance.user_id = users.id');
+        if (isset($data['searchString']) && !empty($data['searchString'])) {
+            $querystring = "(staffbalance.buydate LIKE '%" . $data['searchString'] . "%' OR staffbalance.amount LIKE '%" . $data['searchString'] . "%' OR users.firstname LIKE '%" . $data['searchString'] . "%'  OR users.lastname LIKE '%" . $data['searchString'] . "%' OR users.mobileno LIKE '%" . $data['searchString'] . "%')";
+            $this->db->where($querystring);
+        }
+        if (isset($data['fromdate']) && !empty($data['fromdate'])) {
+            $this->db->where('staffbalance.buydate >=', $data['fromdate']);
+        }
+        if (isset($data['todate']) && !empty($data['todate'])) {
+            $this->db->where('staffbalance.buydate <=', $data['todate']);
+        }
+        if (isset($data['user_id']) && !empty($data['user_id']) && isset($data['username']) && !empty($data['username'])) {
+            $this->db->where('users.id', $data['user_id']);
         }
         $this->db->where('staffbalance.dels', 0);
         $query = $this->db->get();

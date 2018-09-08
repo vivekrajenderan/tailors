@@ -18,18 +18,6 @@
                         </div>
                         <form id="userform" method="POST" name="userform" action="<?php echo base_url() . 'users/ajaxbalancesave/' . $id; ?>" enctype="multipart/form-data">
                             <div class="form-group form-float">
-                                <label class="form-label">Amount</label>
-                                <div class="form-line">
-                                    <input type="text" class="form-control" name="amount" id="amount" value="<?php echo isset($balance_list[0]['amount']) ? $balance_list[0]['amount'] : ''; ?>" required>
-                                </div>
-                            </div>                           
-                            <div class="form-group form-float">
-                                <label class="form-label">Date</label>
-                                <div class="form-line">
-                                    <input type="text" class="datepicker form-control" placeholder="Please choose to date..." name="buydate" id="buydate" value="<?php echo isset($balance_list[0]['buydate']) ? $balance_list[0]['buydate'] : ''; ?>" required>
-                                </div>
-                            </div>                           
-                            <div class="form-group form-float">
                                 <label class="form-label">Staff Name</label>
                                 <div class="form-line">
                                     <select class="form-control show-tick" id="user_id" name="user_id">
@@ -48,7 +36,20 @@
 
                                     </select> 
                                 </div>
-                            </div> 
+                            </div>
+                            <div class="form-group form-float">
+                                <label class="form-label">Amount</label>
+                                <div class="form-line">
+                                    <input type="text" class="form-control" name="amount" id="amount" value="<?php echo isset($balance_list[0]['amount']) ? $balance_list[0]['amount'] : ''; ?>" required>
+                                </div>
+                            </div>                           
+                            <div class="form-group form-float">
+                                <label class="form-label">Date</label>
+                                <div class="form-line">
+                                    <input type="text" class="datepicker form-control" placeholder="Please choose to date..." name="buydate" id="buydate" value="<?php echo isset($balance_list[0]['buydate']) ? $balance_list[0]['buydate'] : ''; ?>" required>
+                                </div>
+                            </div>                           
+                             
                             <a href="<?php echo base_url(); ?>users/staffbalance" class="btn bg-blue-grey waves-effect" onclick="return confirm('Are you sure cancel the data?')">Cancel</a>
                             <button class="btn btn-primary waves-effect" type="submit">SUBMIT</button>
                         </form>

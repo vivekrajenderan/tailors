@@ -48,7 +48,8 @@
 <!--                                        <th>Paid Amount</th>                      
                                         <th>Balance Amount</th>                      -->
                                         <th>Order Date</th>                      
-                                        <th>Delivery Date</th>                      
+<!--                                        <th>Delivery Date</th>                      -->
+                                        <th>Status</th>                      
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -62,7 +63,8 @@
 <!--                                        <th>Paid Amount</th>                      
                                         <th>Balance Amount</th>                      -->
                                         <th>Order Date</th> 
-                                        <th>Delivery Date</th>   
+<!--                                        <th>Delivery Date</th>   -->
+                                        <th>Status</th>   
                                         <th>Action</th>
                                     </tr>
                                 </tfoot>

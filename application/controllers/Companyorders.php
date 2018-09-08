@@ -16,9 +16,7 @@ class Companyorders extends CI_Controller {
         }
     }
 
-    public function index() {
-        //$orders_lists = $this->orders_model->companyorderlists();
-        //$data = array('orders_lists' => $orders_lists);
+    public function index() {        
         $this->load->view('includes/header');
         $this->load->view('includes/sidebar');
         $this->load->view('companyorders/list');
@@ -30,7 +28,7 @@ class Companyorders extends CI_Controller {
         $start = isset($_REQUEST['start']) ? $_REQUEST['start'] : 0;
         $end = isset($_REQUEST['length']) ? $_REQUEST['length'] : 10;
 
-        $ordercolumn = array('0' => 'orderdetails.orderno', '1' => 'company.name', '2' => 'orderdetails.price', '3' => 'orderdetails.quantity', '4' => 'orderdetails.total_amount', '5' => 'orderdetails.orderdate', '6' => 'orderdetails.deliverydate');
+        $ordercolumn = array('0' => 'orderdetails.orderno', '1' => 'company.name', '2' => 'orderdetails.price', '3' => 'orderdetails.quantity', '4' => 'orderdetails.total_amount', '5' => 'orderdetails.orderdate', '6' => 'orderdetails.orderstatus');
         $pagecolumn = isset($_REQUEST['order'][0]['column']) ? $_REQUEST['order'][0]['column'] : 0;
         $pageorder = isset($_REQUEST['order'][0]['dir']) ? $_REQUEST['order'][0]['dir'] : 'desc';
         $searchvalue = isset($_REQUEST['search']['value']) ? $_REQUEST['search']['value'] : "";
@@ -61,7 +59,8 @@ class Companyorders extends CI_Controller {
             $tempD[] = $value['quantity'];
             $tempD[] = $value['total_amount'];
             $tempD[] = $value['orderdate'];
-            $tempD[] = $value['deliverydate'];
+//            $tempD[] = $value['deliverydate'];
+            $tempD[] = ucfirst($value['orderstatus']);
             $tempD[] = $value['id'];
             $tempD["DT_RowId"] = md5($value['id']);
             // Row  PUSH
@@ -171,6 +170,9 @@ class Companyorders extends CI_Controller {
                 echo json_encode(array('status' => 0, 'msg' => validation_errors()));
                 return false;
             } else {
+                
+                
+                
                 $data = array('order_id' => trim($this->input->post('order_id')),
                     'deliveryquantity' => trim($this->input->post('deliveryquantity')),
                     'paiddate' => trim($this->input->post('paiddate'))
@@ -181,6 +183,19 @@ class Companyorders extends CI_Controller {
                     $data['created_on'] = date('Y-m-d H:i:s');
                     $savedelivery = $this->orders_model->savedeliveryquantity($data);
                 }
+                $orders_list = $this->orders_model->companyorderlists(md5($this->input->post('order_id')));
+                $totalquantity=(isset($orders_list[0]['quantity']))?$orders_list[0]['quantity']:0;
+                $deliverylist = $this->orders_model->getdeliveryquantity(md5($this->input->post('order_id')));
+                $deliveryquantity=(isset($deliverylist[0]['totaldeliveryquanity']))?$deliverylist[0]['totaldeliveryquanity']:0;                
+                if($totalquantity==$deliveryquantity)
+                {
+                    $this->orders_model->update(array('orderstatus'=>'delivered'), md5($this->input->post('order_id')));
+                }
+                else
+                {
+                    $this->orders_model->update(array('orderstatus'=>'inprogress'), md5($this->input->post('order_id')));
+                }
+                
                 if ($savedelivery == 1) {
                     $this->session->set_flashdata('SucMessage', 'Delivery Quantity Details Saved Successfully');
                     echo json_encode(array('status' => 1));
