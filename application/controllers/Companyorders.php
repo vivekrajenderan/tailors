@@ -36,13 +36,13 @@ class Companyorders extends CI_Controller {
         if (isset($ordercolumn[$pagecolumn])) {
             $sortingcolumn = $ordercolumn[$pagecolumn];
             if ($sortingcolumn == 'orderdetails.orderno') {
-                $sortingcolumn= 'orderdetails.id';
+                $sortingcolumn = 'orderdetails.id';
             }
         }
         $data = array('sortingcolumn' => $sortingcolumn, 'orderby' => $pageorder, 'searchString' => $searchvalue, 'start' => $start, 'end' => $end);
         $orders_lists = $this->orders_model->ajaxcompanyorderlists($data);
         $orders_count = $this->orders_model->ajaxcompanyordercount($data);
-        
+
         $pcount = 0;
         if (isset($orders_count[0]['totalcount']) && !empty($orders_count[0]['totalcount']))
             $pcount = ($orders_count[0]['totalcount']);
@@ -184,17 +184,8 @@ class Companyorders extends CI_Controller {
                 } else {
                     $data['created_on'] = date('Y-m-d H:i:s');
                     $savedelivery = $this->orders_model->savedeliveryquantity($data);
-                }
-                $orders_list = $this->orders_model->companyorderlists(md5($this->input->post('order_id')));
-                $totalquantity = (isset($orders_list[0]['quantity'])) ? $orders_list[0]['quantity'] : 0;
-                $deliverylist = $this->orders_model->getdeliveryquantity(md5($this->input->post('order_id')));
-                $deliveryquantity = (isset($deliverylist[0]['totaldeliveryquanity'])) ? $deliverylist[0]['totaldeliveryquanity'] : 0;
-                if ($totalquantity == $deliveryquantity) {
-                    $this->orders_model->update(array('orderstatus' => 'delivered'), md5($this->input->post('order_id')));
-                } else {
-                    $this->orders_model->update(array('orderstatus' => 'inprogress'), md5($this->input->post('order_id')));
-                }
-
+                }                
+                $this->changestatus(md5($this->input->post('order_id')));
                 if ($savedelivery == 1) {
                     $this->session->set_flashdata('SucMessage', 'Delivery Quantity Details Saved Successfully');
                     echo json_encode(array('status' => 1));
@@ -267,6 +258,7 @@ class Companyorders extends CI_Controller {
         if ($id != "") {
             $deleteorder = $this->orders_model->deletedeliveryquantity($id);
             if ($deleteorder == "1") {
+                $this->changestatus($order_id);
                 $this->session->set_flashdata('SucMessage', 'Delivery Quantity Details has been deleted successfully!!!');
             } else {
                 $this->session->set_flashdata('ErrorMessages', 'Delivery Quantity Details has not been deleted successfully!!!');
@@ -274,6 +266,18 @@ class Companyorders extends CI_Controller {
             redirect(base_url() . 'companyorders/deliverydetails/' . $order_id, 'refresh');
         } else {
             redirect(base_url() . 'companyorders', 'refresh');
+        }
+    }
+
+    public function changestatus($order_id) {
+        $orders_list = $this->orders_model->companyorderlists($order_id);
+        $totalquantity = (isset($orders_list[0]['quantity'])) ? $orders_list[0]['quantity'] : 0;
+        $deliverylist = $this->orders_model->getdeliveryquantity($order_id);
+        $deliveryquantity = (isset($deliverylist[0]['totaldeliveryquanity'])) ? $deliverylist[0]['totaldeliveryquanity'] : 0;
+        if ($totalquantity == $deliveryquantity) {
+            $this->orders_model->update(array('orderstatus' => 'delivered'), $order_id);
+        } else {
+            $this->orders_model->update(array('orderstatus' => 'inprogress'), $order_id);
         }
     }
 
