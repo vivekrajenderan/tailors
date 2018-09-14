@@ -93,38 +93,34 @@ class Reports extends CI_Controller {
         if (isset($ordercolumn[$pagecolumn])) {
             $sortingcolumn = $ordercolumn[$pagecolumn];
         }
-        $fromdate="";
-        if(isset($_REQUEST['fromdate']) && !empty($_REQUEST['fromdate']))
-        {
-            $fromdate=$_REQUEST['fromdate'];
+        $fromdate = "";
+        if (isset($_REQUEST['fromdate']) && !empty($_REQUEST['fromdate'])) {
+            $fromdate = $_REQUEST['fromdate'];
         }
-        
-        $todate="";
-        if(isset($_REQUEST['todate']) && !empty($_REQUEST['todate']))
-        {
-            $todate=$_REQUEST['todate'];
-        }        
-        $username="";
-        if(isset($_REQUEST['username']) && !empty($_REQUEST['username']))
-        {
-            $username=$_REQUEST['username'];
-        }        
-        $user_id="";
-        if(isset($_REQUEST['user_id']) && !empty($_REQUEST['user_id']))
-        {
-            $user_id=$_REQUEST['user_id'];
-        }        
-        $data = array('sortingcolumn' => $sortingcolumn, 'orderby' => $pageorder, 
-            'searchString' => $searchvalue, 
-            'start' => $start, 
+
+        $todate = "";
+        if (isset($_REQUEST['todate']) && !empty($_REQUEST['todate'])) {
+            $todate = $_REQUEST['todate'];
+        }
+        $username = "";
+        if (isset($_REQUEST['username']) && !empty($_REQUEST['username'])) {
+            $username = $_REQUEST['username'];
+        }
+        $user_id = "";
+        if (isset($_REQUEST['user_id']) && !empty($_REQUEST['user_id'])) {
+            $user_id = $_REQUEST['user_id'];
+        }
+        $data = array('sortingcolumn' => $sortingcolumn, 'orderby' => $pageorder,
+            'searchString' => $searchvalue,
+            'start' => $start,
             'end' => $end,
             'user_id' => $user_id,
             'username' => $username,
-            'fromdate'=>$fromdate,
-            'todate'=>$todate);
+            'fromdate' => $fromdate,
+            'todate' => $todate);
         $orders_lists = $this->orders_model->ajaxstaffreport($data);
         $orders_count = $this->orders_model->ajaxstaffreportcount($data);
-        
+
         $pcount = 0;
         if (isset($orders_count[0]['totalcount']) && !empty($orders_count[0]['totalcount']))
             $pcount = ($orders_count[0]['totalcount']);
@@ -138,9 +134,9 @@ class Reports extends CI_Controller {
             $tempD = array();
             // Row based column PUSH
             $tempD[] = $value['buydate'];
-            $tempD[] = $value['firstname']." ".$value['lastname'];
+            $tempD[] = $value['firstname'] . " " . $value['lastname'];
             $tempD[] = $value['mobileno'];
-            $tempD[] = $value['amount']; 
+            $tempD[] = $value['amount'];
             $tempD["DT_RowId"] = md5($value['id']);
             // Row  PUSH
             $dataR['data'][] = $tempD;
@@ -150,15 +146,15 @@ class Reports extends CI_Controller {
     }
 
     public function otherexpenses() {
-        $expenseslists= $this->orders_model->otherexpenseslists();     
-        $type_list = $this->orders_model->expensetypelists();       
-        $data = array('expenseslists' => $expenseslists,'type_list' => $type_list);
+        $expenseslists = $this->orders_model->otherexpenseslists();
+        $type_list = $this->orders_model->expensetypelists();
+        $data = array('expenseslists' => $expenseslists, 'type_list' => $type_list);
         $this->load->view('includes/header');
         $this->load->view('includes/sidebar');
         $this->load->view('reports/expenses', $data);
         $this->load->view('includes/footer');
     }
-    
+
     public function otherexpenseadd($id = NULL) {
         $expenseslists = array();
         if ($id != "") {
@@ -167,7 +163,7 @@ class Reports extends CI_Controller {
                 redirect(base_url() . 'reports/otherexpenses', 'refresh');
             }
         }
-        $type_list = $this->orders_model->expensetypelists();        
+        $type_list = $this->orders_model->expensetypelists();
         $data = array('expenseslists' => $expenseslists, 'id' => $id, 'type_list' => $type_list);
         $this->load->view('includes/header');
         $this->load->view('includes/sidebar');
@@ -186,11 +182,11 @@ class Reports extends CI_Controller {
                 return false;
             } else {
                 $data = array('amount' => trim($this->input->post('amount')),
-                    'expense_type_id' => trim($this->input->post('expense_type_id'))                    
+                    'expense_type_id' => trim($this->input->post('expense_type_id'))
                 );
                 if ($id != "") {
                     $data['updated_on'] = date('Y-m-d H:i:s');
-                    $saveexpenses= $this->orders_model->updateexpenses($data, $id);
+                    $saveexpenses = $this->orders_model->updateexpenses($data, $id);
                 } else {
                     $data['created_on'] = date('Y-m-d H:i:s');
                     $saveexpenses = $this->orders_model->saveexpenses($data);
@@ -204,4 +200,19 @@ class Reports extends CI_Controller {
             }
         }
     }
+
+    public function expensesdelete($id = NULL) {
+        if ($id != "") {
+            $deleteExpenses = $this->orders_model->deleteexpenses($id);
+            if ($deleteExpenses == "1") {
+                $this->session->set_flashdata('SucMessage', 'Expenses has been deleted successfully!!!');
+            } else {
+                $this->session->set_flashdata('ErrorMessages', 'Expenses has not been deleted successfully!!!');
+            }
+            redirect(base_url() . 'reports/otherexpenses', 'refresh');
+        } else {
+            redirect(base_url() . 'reports/otherexpenses', 'refresh');
+        }
+    }
+
 }

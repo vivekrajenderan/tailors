@@ -572,8 +572,8 @@ class Orders_model extends CI_Model {
         return ($this->db->affected_rows() > 0);
     }
 
-    public function updateexpenses($set_data, $id) {
-        $this->db->where('id', $id);
+    public function updateexpenses($set_data, $id) {        
+        $this->db->where('md5(id)', $id);
         $this->db->update("expenses", $set_data);
         return 1;
     }

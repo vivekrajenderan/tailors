@@ -62,19 +62,23 @@
                                         <th>Name</th>
                                         <th>Date</th> 
                                         <th>Amount</th> 
+                                        <th>Action</th> 
                                     </tr>
                                 </thead>
 
                                 <tbody>
                                     <?php
-                                    $total_amount =  0;
+                                    $total_amount = 0;
                                     foreach ($expenseslists as $key => $lists) {
-                                        $total_amount += $lists['amount'];                                        
+                                        $total_amount += $lists['amount'];
                                         ?>
                                         <tr>
                                             <td><?php echo isset($lists['name']) ? $lists['name'] : ""; ?></td>
                                             <td><?php echo isset($lists['created_on']) ? $lists['created_on'] : ""; ?></td>                                            
                                             <td><?php echo isset($lists['amount']) ? $lists['amount'] : ""; ?></td>
+                                            <td>
+                                                <a href="<?php echo base_url() . 'reports/otherexpenseadd/' . md5($lists['id']); ?>" title="Edit" ><i class="material-icons" style="font-size: 20px;">edit</i></a>&nbsp;<a href="<?php echo base_url() . 'reports/expensesdelete/' . md5($lists['id']); ?>" title="Delete"><i class="material-icons" style="font-size: 20px;">delete</i></a>
+                                            </td>
                                         </tr>       
                                     <?php } ?>
 
@@ -82,12 +86,14 @@
                                 <tfoot>
                                     <tr>
                                         <th colspan="2"></th>                                       
-                                        <th>Total Amount</th>                                                       
+                                        <th>Total Amount</th>  
+                                        <th>&nbsp;</th>
 
                                     </tr>
                                     <tr>
                                         <td colspan="2"></td> 
-                                        <td><?php echo $total_amount; ?></td>                                        
+                                        <td><?php echo $total_amount; ?></td>    
+                                        <td>&nbsp;</td>
                                     </tr>
                                 </tfoot>
 
@@ -125,113 +131,131 @@
 <script src="<?php echo base_url() . 'assets/plugins/jquery-validation/jquery.validate.js'; ?>"></script>
 <script src="<?php echo base_url() . 'assets/js/bootstrap-typeahead.js'; ?>"></script>
 <script type="text/javascript">
-    $(document).ready(function () {
-        $('.datepicker').bootstrapMaterialDatePicker({
-            format: 'YYYY-MM-DD',
-            clearButton: true,
-            weekStart: 1,
-            time: false
-        });
-    });
-    $(function () {
-        
-        $('.resetform').click(function () {            
-            $('.datepicker').bootstrapMaterialDatePicker('setDate', null);
-            $('.datepicker').attr('value', '');
-            $('.customertext').attr('value', '');          
-            $('#orderform')[0].reset();
-        });
-        
-        setTimeout(function () {
-            $('.bg-red').hide('slow');
-            $('.bg-green').hide('slow');
-        }, 4000);
+                                    $(document).ready(function () {
+                                        $('.datepicker').bootstrapMaterialDatePicker({
+                                            format: 'YYYY-MM-DD',
+                                            clearButton: true,
+                                            weekStart: 1,
+                                            time: false
+                                        });
+                                    });
+                                    $(function () {
 
-        $('.js-basic-example').DataTable({
-            responsive: true
-        });
+                                        $('.resetform').click(function () {
+                                            $('.datepicker').bootstrapMaterialDatePicker('setDate', null);
+                                            $('.datepicker').attr('value', '');
+                                            $('.customertext').attr('value', '');
+                                            $('#orderform')[0].reset();
+                                        });
 
-        //Exportable table
-        $('.js-exportable').DataTable({
-            dom: 'Bfrtip',
-            buttons: [
-                {
-                    extend: 'copy'
-                },
-                {
-                    extend: 'csv'
-                },
-                {
-                    extend: 'excel'
-                },
-                {
-                    extend: 'pdf'
-                },
-                {
-                    extend: 'print'
-                }
-            ],
-            
-        });
-    });
-    function vieworders(orderid)
-    {
-        if (orderid != "")
-        {
-            $.ajax({
-                type: "POST",
-                url: "<?php echo base_url(); ?>customerorders/vieworders",
-                data: "order_id=" + orderid,
-                async: false,
-                success:
-                        function (msg) {
-                            $("#showorder").html(msg);
-                            $('#defaultModal').modal('show');
-                        }
-            });
-        }
-    }
+                                        setTimeout(function () {
+                                            $('.bg-red').hide('slow');
+                                            $('.bg-green').hide('slow');
+                                        }, 4000);
 
-    $(function () {
+                                        $('.js-basic-example').DataTable({
+                                            responsive: true
+                                        });
 
-        $('#orderform').validate({
-            highlight: function (input) {
-                $(input).parents('.form-line').addClass('error');
-            },
-            unhighlight: function (input) {
-                $(input).parents('.form-line').removeClass('error');
-            },
-            errorPlacement: function (error, element) {
-                $(element).parents('.form-group').append(error);
-            },
-            rules: {
-                fromdate: {
-                    required: true
-                },
-                todate: {
-                    required: true
-                }
-            },
-            messages: {
-                fromdate: {
-                    required: "Please choose from date"
+                                        //Exportable table
+                                        $('.js-exportable').DataTable({
+                                            dom: 'Bfrtip',
+                                            buttons: [
+                                                {
+                                                    extend: 'copy',
+                                                    exportOptions: {
+                                                        columns: ':not(:last-child)',
+                                                    }
+                                                },
+                                                {
+                                                    extend: 'csv',
+                                                    exportOptions: {
+                                                        columns: ':not(:last-child)',
+                                                    }
+                                                },
+                                                {
+                                                    extend: 'excel',
+                                                    exportOptions: {
+                                                        columns: ':not(:last-child)',
+                                                    }
+                                                },
+                                                {
+                                                    extend: 'pdf',
+                                                    exportOptions: {
+                                                        columns: ':not(:last-child)',
+                                                    }
+                                                },
+                                                {
+                                                    extend: 'print',
+                                                    exportOptions: {
+                                                        columns: ':not(:last-child)',
+                                                    }
+                                                }
+                                            ],
+                                            "aoColumnDefs": [
+                                                {'bSortable': false, 'aTargets': [3]}  //Not sorting the first and last columns
 
-                },
-                todate: {
-                    required: "Please choose to date"
+                                            ],
+                                        });
+                                    });
+                                    function vieworders(orderid)
+                                    {
+                                        if (orderid != "")
+                                        {
+                                            $.ajax({
+                                                type: "POST",
+                                                url: "<?php echo base_url(); ?>customerorders/vieworders",
+                                                data: "order_id=" + orderid,
+                                                async: false,
+                                                success:
+                                                        function (msg) {
+                                                            $("#showorder").html(msg);
+                                                            $('#defaultModal').modal('show');
+                                                        }
+                                            });
+                                        }
+                                    }
 
-                }
-            }
-        });
-    });
-    function displayResult(item) {       
-        if (item.value)
-        {
-            $("#expense_type_id").val(item.value);
-        }
-    }
-    $('#typename').typeahead({
-        source: <?php echo json_encode($type_list); ?>,
-        onSelect: displayResult
-    });
+                                    $(function () {
+
+                                        $('#orderform').validate({
+                                            highlight: function (input) {
+                                                $(input).parents('.form-line').addClass('error');
+                                            },
+                                            unhighlight: function (input) {
+                                                $(input).parents('.form-line').removeClass('error');
+                                            },
+                                            errorPlacement: function (error, element) {
+                                                $(element).parents('.form-group').append(error);
+                                            },
+                                            rules: {
+                                                fromdate: {
+                                                    required: true
+                                                },
+                                                todate: {
+                                                    required: true
+                                                }
+                                            },
+                                            messages: {
+                                                fromdate: {
+                                                    required: "Please choose from date"
+
+                                                },
+                                                todate: {
+                                                    required: "Please choose to date"
+
+                                                }
+                                            }
+                                        });
+                                    });
+                                    function displayResult(item) {
+                                        if (item.value)
+                                        {
+                                            $("#expense_type_id").val(item.value);
+                                        }
+                                    }
+                                    $('#typename').typeahead({
+                                        source: <?php echo json_encode($type_list); ?>,
+                                        onSelect: displayResult
+                                    });
 </script>
