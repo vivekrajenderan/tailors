@@ -17,12 +17,12 @@
                                 </h2>
                             </div>  
                             <div class="col-md-6 col-xs-4">
-                                <div class="pull-right"><button onclick="location.href = '<?php echo base_url() . "reports/otherexpenseadd"; ?>';" type="button" class="btn bg-cyan waves-effect">Add Expenses</button></div>
+                                <div class="pull-right"><button onclick="location.href = '<?php echo base_url() . "expenses/add"; ?>';" type="button" class="btn bg-cyan waves-effect">Add Expenses</button></div>
                             </div>
                         </div>
                     </div>
                     <div class="body">
-                        <form id="orderform" method="POST" name="orderform" action="<?php echo base_url() . 'reports/otherexpenses/'; ?>" style="margin-bottom: 30px;">
+                        <form id="orderform" method="POST" name="orderform" action="<?php echo base_url() . 'expenses/index/'; ?>" style="margin-bottom: 30px;">
                             <div class="row">
                                 <div class="col-md-3">
                                     <div class="form-group form-float">
@@ -77,7 +77,7 @@
                                             <td><?php echo isset($lists['created_on']) ? $lists['created_on'] : ""; ?></td>                                            
                                             <td><?php echo isset($lists['amount']) ? $lists['amount'] : ""; ?></td>
                                             <td>
-                                                <a href="<?php echo base_url() . 'reports/otherexpenseadd/' . md5($lists['id']); ?>" title="Edit" ><i class="material-icons" style="font-size: 20px;">edit</i></a>&nbsp;<a href="<?php echo base_url() . 'reports/expensesdelete/' . md5($lists['id']); ?>" title="Delete"><i class="material-icons" style="font-size: 20px;">delete</i></a>
+                                                <a href="<?php echo base_url() . 'expenses/add/' . md5($lists['id']); ?>" title="Edit" ><i class="material-icons" style="font-size: 20px;">edit</i></a>&nbsp;<a href="<?php echo base_url() . 'expenses/delete/' . md5($lists['id']); ?>" title="Delete"><i class="material-icons" style="font-size: 20px;">delete</i></a>
                                             </td>
                                         </tr>       
                                     <?php } ?>

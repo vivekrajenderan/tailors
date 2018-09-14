@@ -16,7 +16,7 @@
                         <div class="alert bg-red" style="display:none;">
 
                         </div>
-                        <form id="expenseform" method="POST" name="expenseform" action="<?php echo base_url() . 'reports/ajaxexpensesave/' . $id; ?>" enctype="multipart/form-data">
+                        <form id="expenseform" method="POST" name="expenseform" action="<?php echo base_url() . 'expenses/ajaxsave/' . $id; ?>" enctype="multipart/form-data">
                             <div class="form-group form-float">
                                 <label class="form-label">Expense Type</label>
                                 <div class="form-line">
@@ -104,7 +104,7 @@
 
                                                 if (response.status == "1")
                                                 {
-                                                    window.location = "<?php echo base_url() . 'reports/otherexpenses'; ?>";
+                                                    window.location = "<?php echo base_url() . 'expenses'; ?>";
                                                 } else
                                                 {
                                                     $('.bg-red').show();

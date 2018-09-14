@@ -114,7 +114,7 @@
                                 <a href="<?php echo base_url() . 'reports/staff'; ?>">Staff</a>
                             </li>                        
                             <li>
-                                <a href="<?php echo base_url() . 'reports/otherexpenses'; ?>">Expenses</a>
+                                <a href="<?php echo base_url() . 'expenses'; ?>">Expenses</a>
                             </li>                        
                         </ul>
                     </li>    
