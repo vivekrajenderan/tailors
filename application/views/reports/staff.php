@@ -19,7 +19,7 @@
                         </div>
                     </div>
                     <div class="body">
-                        <form id="orderform" method="POST" name="orderform" action="<?php echo base_url() . 'reports/staff/'; ?>" style="margin-bottom: 30px;">
+                        <form id="orderform" method="POST" name="orderform" style="margin-bottom: 30px;">
 
                             <div class="row">
                                 <div class="col-md-3">
@@ -64,29 +64,26 @@
                                     </tr>
                                 </thead>
 
-                                <tbody>
-                                    <?php
-                                    $total_amount = 0;
-                                    foreach ($orders_lists as $key => $lists) {                                        
-                                        $total_amount += $lists['amount'];                                        
-                                        ?>
-                                        <tr>                                            
-                                            <td><?php echo isset($lists['buydate']) ? $lists['buydate'] : ""; ?></td>
-                                            <td><?php echo isset($lists['firstname']) ? $lists['firstname'] . " " . $lists['lastname'] : ""; ?></td>                                                 
-                                            <td><?php echo isset($lists['mobileno']) ? $lists['mobileno'] : ""; ?></td>
-                                            <td><?php echo isset($lists['amount']) ? $lists['amount'] : ""; ?></td>    
-                                        </tr>       
-                                    <?php } ?>
+<!--                                <tbody>
+                                <?php
+                                $total_amount = 0;
+                                foreach ($orders_lists as $key => $lists) {
+                                    $total_amount += $lists['amount'];
+                                    ?>
+                                                                            <tr>                                            
+                                                                                <td><?php echo isset($lists['buydate']) ? $lists['buydate'] : ""; ?></td>
+                                                                                <td><?php echo isset($lists['firstname']) ? $lists['firstname'] . " " . $lists['lastname'] : ""; ?></td>                                                 
+                                                                                <td><?php echo isset($lists['mobileno']) ? $lists['mobileno'] : ""; ?></td>
+                                                                                <td><?php echo isset($lists['amount']) ? $lists['amount'] : ""; ?></td>    
+                                                                            </tr>       
+                                <?php } ?>
 
-                                </tbody>
+                                </tbody>-->
                                 <tfoot>
                                     <tr>
-                                        <th colspan="3"></th>  
-                                        <th>Total Amount</th>   
-                                    </tr>
-                                    <tr>
-                                        <td colspan="3"></td> 
-                                        <td><?php echo $total_amount; ?></td>
+                                        <th colspan="3" align="right">Total Amount</th>  
+                                        <th id="totalamount">0</th>
+
                                     </tr>
                                 </tfoot>
 
@@ -121,7 +118,7 @@
         {
             $("#user_id").val(item.value);
         }
-    }    
+    }
     $('#username').typeahead({
         source: <?php echo json_encode($user_list); ?>,
         onSelect: displayResult
@@ -136,25 +133,28 @@
     });
     $(function () {
 
-        $('.resetform').click(function () {            
+        $('.resetform').click(function () {
             $('.datepicker').bootstrapMaterialDatePicker('setDate', null);
             $('.datepicker').attr('value', '');
-            $('.usertext').attr('value', '');          
+            $('.usertext').attr('value', '');
             $('#orderform')[0].reset();
         });
-
         setTimeout(function () {
             $('.bg-red').hide('slow');
             $('.bg-green').hide('slow');
         }, 4000);
-
         $('.js-basic-example').DataTable({
             responsive: true
         });
-
         //Exportable table
-        $('.js-exportable').DataTable({
+        var jsdatatable = $('.js-exportable').DataTable({
             dom: 'Bfrtip',
+            "processing": true,
+            "serverSide": true,
+            "ajax": {
+                "url": "<?php echo base_url() . "reports/ajaxstaff"; ?>",
+                "type": "POST"
+            },
             buttons: [
                 {
                     extend: 'copy'
@@ -172,11 +172,28 @@
                     extend: 'print'
                 }
             ],
-            
+            "footerCallback": function (row, data, start, end, display) {
+                var api = this.api(), data;
+                var intVal = function (i) {
+                    return typeof i === 'string' ?
+                            i.replace(/[\$,]/g, '') * 1 :
+                            typeof i === 'number' ?
+                            i : 0;
+                };
+                // Total over all pages
+                var totalamount = 0;
+                totalamount = api
+                        .column(3)
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+                // Update footer
+                $(api.column(0).footer()).html('Total Amount');
+                $("#totalamount").html(totalamount);
+            }
+
         });
-    });
-    
-    $(function () {
 
         $('#orderform').validate({
             highlight: function (input) {
@@ -205,6 +222,11 @@
                     required: "Please choose to date"
 
                 }
+            },
+            submitHandler: function (form) {
+                console.log($("#fromdate").val());
+                jsdatatable.ajax.url("<?php echo base_url() . "reports/ajaxstaff?"; ?>"+$('#orderform').serialize()).load();
+                return false;
             }
         });
     });

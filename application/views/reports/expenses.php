@@ -2,7 +2,7 @@
     <div class="container-fluid">
         <div class="block-header">
             <h2>
-                Customer Order Report            
+                Expenses Report            
             </h2>
         </div>        
         <!-- Exportable Table -->
@@ -13,13 +13,16 @@
                         <div class="row">
                             <div class="col-md-6 col-xs-8">
                                 <h2>
-                                    Customer Report
+                                    Expenses Report
                                 </h2>
-                            </div>                            
+                            </div>  
+                            <div class="col-md-6 col-xs-4">
+                                <div class="pull-right"><button onclick="location.href = '<?php echo base_url() . "reports/otherexpenseadd"; ?>';" type="button" class="btn bg-cyan waves-effect">Add Expenses</button></div>
+                            </div>
                         </div>
                     </div>
                     <div class="body">
-                        <form id="orderform" method="POST" name="orderform" action="<?php echo base_url() . 'reports/customer/'; ?>" style="margin-bottom: 30px;">
+                        <form id="orderform" method="POST" name="orderform" action="<?php echo base_url() . 'reports/otherexpenses/'; ?>" style="margin-bottom: 30px;">
                             <div class="row">
                                 <div class="col-md-3">
                                     <div class="form-group form-float">
@@ -39,10 +42,10 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group form-float">
-                                        <label class="form-label">Customer</label>
+                                        <label class="form-label">Expense Type</label>
                                         <div class="form-line">
-                                            <input type="text" name="customername" id="customername" class="form-control customertext" placeholder="Please select customer" value="<?php echo isset($_POST['customername']) ? $_POST['customername'] : ''; ?>">                                   
-                                            <input type="hidden" name="customerid" id="customerid" class="form-control" value="<?php echo isset($_POST['customerid']) ? $_POST['customerid'] : ''; ?>">                                   
+                                            <input type="text" name="typename" id="typename" class="form-control customertext" placeholder="Please select type" value="<?php echo isset($_POST['typename']) ? $_POST['typename'] : ''; ?>">                                   
+                                            <input type="hidden" name="expense_type_id" id="expense_type_id" class="form-control" value="<?php echo isset($_POST['expense_type_id']) ? $_POST['expense_type_id'] : ''; ?>">                                   
                                         </div>
                                     </div> 
                                 </div>
@@ -56,60 +59,35 @@
                             <table class="table table-bordered table-striped table-hover dataTable js-exportable">
                                 <thead>
                                     <tr>
-                                        <th>Order No</th>
-                                        <th>Order Date</th> 
-                                        <th>Delivery Date</th> 
-                                        <th>Name</th>     
-                                        <th>Price</th>                      
-                                        <th>Quantity</th>                      
-                                        <th>Total Amount</th>                      
-                                        <th>Paid Amount</th>                      
-                                        <th>Balance Amount</th>                      
-
+                                        <th>Name</th>
+                                        <th>Date</th> 
+                                        <th>Amount</th> 
                                     </tr>
                                 </thead>
 
                                 <tbody>
                                     <?php
-                                    $price = $quantity = $total_amount = $paid_amount = $balance_amount = 0;
-                                    foreach ($orders_lists as $key => $lists) {
-                                        $price += $lists['price'];
-                                        $quantity += $lists['quantity'];
-                                        $total_amount += $lists['total_amount'];
-                                        $paid_amount += $lists['paid_amount'];
-                                        $balance_amount += ($lists['total_amount'] - $lists['paid_amount']);
+                                    $total_amount =  0;
+                                    foreach ($expenseslists as $key => $lists) {
+                                        $total_amount += $lists['amount'];                                        
                                         ?>
                                         <tr>
-                                            <td><?php echo isset($lists['orderno']) ? $lists['orderno'] : ""; ?></td>
-                                            <td><?php echo isset($lists['orderdate']) ? $lists['orderdate'] : ""; ?></td>
-                                            <td><?php echo isset($lists['deliverydate']) ? $lists['deliverydate'] : ""; ?></td>
-                                            <td><?php echo isset($lists['name']) ? $lists['name'] : ""; ?></td>                                                   
-                                            <td><?php echo isset($lists['price']) ? $lists['price'] : ""; ?></td>    
-                                            <td><?php echo isset($lists['quantity']) ? $lists['quantity'] : ""; ?></td>    
-                                            <td><?php echo isset($lists['total_amount']) ? $lists['total_amount'] : ""; ?></td>    
-                                            <td><?php echo isset($lists['paid_amount']) ? $lists['paid_amount'] : ""; ?></td>    
-                                            <td><?php echo $lists['total_amount'] - $lists['paid_amount']; ?></td>
+                                            <td><?php echo isset($lists['name']) ? $lists['name'] : ""; ?></td>
+                                            <td><?php echo isset($lists['created_on']) ? $lists['created_on'] : ""; ?></td>                                            
+                                            <td><?php echo isset($lists['amount']) ? $lists['amount'] : ""; ?></td>
                                         </tr>       
                                     <?php } ?>
 
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <th colspan="4"></th>                                       
-                                        <th>Total Price</th> 
-                                        <th>Total Quantity</th>                      
-                                        <th>Total Amount</th>                      
-                                        <th>Paid Amount</th>                      
-                                        <th>Balance Amount</th>                      
+                                        <th colspan="2"></th>                                       
+                                        <th>Total Amount</th>                                                       
 
                                     </tr>
                                     <tr>
-                                        <td colspan="4"></td>         
-                                        <td><?php echo $price; ?></td>
-                                        <td><?php echo $quantity; ?></td>
-                                        <td><?php echo $total_amount; ?></td>
-                                        <td><?php echo $paid_amount; ?></td>
-                                        <td><?php echo $balance_amount; ?></td>
+                                        <td colspan="2"></td> 
+                                        <td><?php echo $total_amount; ?></td>                                        
                                     </tr>
                                 </tfoot>
 
@@ -246,19 +224,14 @@
             }
         });
     });
-    function displayResult(item) {
-        console.log(item);
+    function displayResult(item) {       
         if (item.value)
         {
-            $("#customerid").val(item.value);
+            $("#expense_type_id").val(item.value);
         }
     }
-    $('#customername').typeahead({
-        ajax: {
-            url: "<?php echo base_url() . "reports/getcustomer"; ?>",
-            method: 'post',
-            triggerLength: 1
-        },
+    $('#typename').typeahead({
+        source: <?php echo json_encode($type_list); ?>,
         onSelect: displayResult
     });
 </script>
