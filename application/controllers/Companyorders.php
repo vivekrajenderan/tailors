@@ -287,7 +287,7 @@ class Companyorders extends CI_Controller {
             $orders_list = $this->orders_model->companyorderlists($_POST['order_id']);
             if (count($orders_list)) {
                 $printurl = base_url() . 'companyorders/printorder?order_id=' . $_POST['order_id'];
-                $html .= '<a href="' . $printurl . '" class="btn bg-cyan waves-effect" target="_blank">Print This</a>';
+                $html .= '<div class="btn-group btn-group-justified"><a href="' . $printurl . '" class="btn bg-cyan waves-effect" target="_blank"><i class="material-icons">print</i><span>Print</span></a></div>';
                 $html .= '<div class="modal-header">
                     <h4 class="modal-title" id="defaultModalLabel">' . $orders_list[0]['orderno'] . '</h4>
                 </div><div class="modal-body">

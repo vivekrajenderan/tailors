@@ -19,13 +19,13 @@
             table { border-collapse: collapse; }
             table td, table th { border: 1px solid black; padding: 5px; }
 
-            #header { height: 15px; width: 100%; margin: 20px 0; background: #222; text-align: center; color: white; font: bold 15px Helvetica, Sans-Serif; text-decoration: uppercase; letter-spacing: 4px; padding: 8px 0px; }
+            #header { height: 15px; width: 100%; margin: 20px 0; background: #e73838; text-align: center; color: white; font: bold 15px Helvetica, Sans-Serif; text-decoration: uppercase; letter-spacing: 4px; padding: 8px 0px; }
 
             #address { width: 250px; height: 150px; float: left; }
             #customer { overflow: hidden; }
 
             #logo { text-align: right; float: right; position: relative; margin-top: 25px; border: 1px solid #fff; max-width: 540px; max-height: 100px; overflow: hidden; }
-            #logo:hover, #logo.edit { border: 1px solid #000; margin-top: 0px; max-height: 125px; }
+            
             #logoctr { display: none; }            
             #logohelp { text-align: left; display: none; font-style: italic; padding: 10px 5px;}
             #logohelp input { margin-bottom: 5px; }
@@ -60,6 +60,7 @@
 
             .delete-wpr { position: relative; }
             .delete { display: block; color: #000; text-decoration: none; position: absolute; background: #EEEEEE; font-weight: bold; padding: 0px 3px; border: 1px solid; top: -6px; left: -22px; font-family: Verdana; font-size: 12px; }
+            @page { size: auto;  margin: 0mm; width: 800px; margin: 0 auto;}
         </style>
 
     </head>

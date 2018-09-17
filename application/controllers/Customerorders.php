@@ -119,9 +119,11 @@ class Customerorders extends CI_Controller {
                     'product_id' => isset($orders_list[0]['product_id']) ? $orders_list[0]['product_id'] : $this->input->post('product_id'),
                     'orderdate' => trim($this->input->post('orderdate')),
                     'deliverydate' => trim($this->input->post('deliverydate')),
+                    'description' => trim($this->input->post('description')),
                     'quantity' => trim($this->input->post('quantity')),
+                    'modelprice' => trim($this->input->post('modelprice')),
                     'price' => trim($this->input->post('price')),
-                    'total_amount' => $this->input->post('price') * $this->input->post('quantity'),
+                    'total_amount' => ($this->input->post('price') * $this->input->post('quantity'))+trim($this->input->post('modelprice')),
                     'paid_amount' => trim($this->input->post('paid_amount')),
                     'balance_amount' => ($this->input->post('price') * $this->input->post('quantity')) - $this->input->post('paid_amount')
                 );
@@ -191,8 +193,9 @@ class Customerorders extends CI_Controller {
             $html = "";
             $orders_list = $this->orders_model->customerorderlists($_POST['order_id']);
             if (count($orders_list)) {
-                $printurl = base_url() . 'customerorders/printorder?order_id=' . $_POST['order_id'];
-                $html .= '<a href="' . $printurl . '" class="btn bg-cyan waves-effect" target="_blank">Print This</a>';
+                $customerprinturl = base_url() . 'customerorders/customerprintorder?order_id=' . $_POST['order_id'];
+                $tailorprinturl = base_url() . 'customerorders/tailorprintorder?order_id=' . $_POST['order_id'];
+                $html .= '<div class="btn-group btn-group-justified"><a href="' . $tailorprinturl . '" class="btn bg-red waves-effect" target="_blank"><i class="material-icons">print</i><span>Tailor</span></a><a href="' . $customerprinturl . '" class="btn bg-pink waves-effect" target="_blank"><i class="material-icons">print</i><span>Customer</span></a></div>';
                 $html .= '<div class="modal-header">
                     <h4 class="modal-title" id="defaultModalLabel">' . $orders_list[0]['orderno'] . '</h4>
                 </div><div class="modal-body">
@@ -203,6 +206,9 @@ class Customerorders extends CI_Controller {
                         </div>
                         <div class="col-md-6">
                             <div class="col-md-6"><label>Mobile No</label></div><div class="col-md-6">' . $orders_list[0]['mobileno'] . '</div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="col-md-6"><label>Model Price</label></div><div class="col-md-6">' . $orders_list[0]['modelprice'] . '</div>
                         </div>
                         <div class="col-md-6">
                             <div class="col-md-6"><label>Price</label></div><div class="col-md-6">' . $orders_list[0]['price'] . '</div>
@@ -228,6 +234,9 @@ class Customerorders extends CI_Controller {
                         <div class="col-md-6">
                             <div class="col-md-6"><label>Product Name</label></div><div class="col-md-6">' . $orders_list[0]['productname'] . '</div>
                         </div>
+                        <div class="col-md-6">
+                            <div class="col-md-6"><label>Description</label></div><div class="col-md-6">' . $orders_list[0]['description'] . '</div>
+                        </div>
                     </div>';
 
                 $typeresult = $this->orders_model->producttypeview();
@@ -251,7 +260,7 @@ class Customerorders extends CI_Controller {
         }
     }
 
-    public function printorder() {
+    public function customerprintorder() {
         if (($this->input->server('REQUEST_METHOD') == 'GET')) {
 
             $_POST['order_id'] = $_GET['order_id'];
@@ -260,6 +269,18 @@ class Customerorders extends CI_Controller {
             $result = $this->orders_model->measurementvalues();
             $typeresult = $this->orders_model->producttypeview();
             $this->load->view('customerorders/print', array('htmlcontent' => $html, 'orders_list' => $orders_list, 'typeresult' => $typeresult, 'measurements' => $result));
+        }
+    }
+    
+    public function tailorprintorder() {
+        if (($this->input->server('REQUEST_METHOD') == 'GET')) {
+
+            $_POST['order_id'] = $_GET['order_id'];
+            $html = "";
+            $orders_list = $this->orders_model->customerorderlists($_POST['order_id']);
+            $result = $this->orders_model->measurementvalues();
+            $typeresult = $this->orders_model->producttypeview();
+            $this->load->view('customerorders/tailorprint', array('htmlcontent' => $html, 'orders_list' => $orders_list, 'typeresult' => $typeresult, 'measurements' => $result));
         }
     }
 

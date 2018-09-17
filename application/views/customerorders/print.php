@@ -19,13 +19,13 @@
             table { border-collapse: collapse; }
             table td, table th { border: 1px solid black; padding: 5px; }
 
-            #header { height: 15px; width: 100%; margin: 20px 0; background: #222; text-align: center; color: white; font: bold 15px Helvetica, Sans-Serif; text-decoration: uppercase; letter-spacing: 4px; padding: 8px 0px; }
+            #header { height: 15px; width: 100%; margin: 20px 0; background: #e73838; text-align: center; color: white; font: bold 15px Helvetica, Sans-Serif; text-decoration: uppercase; letter-spacing: 4px; padding: 8px 0px; }
 
-            #address { width: 250px; height: 150px; float: left; }
+            #address { width: 250px; float: left; }
             #customer { overflow: hidden; }
 
             #logo { text-align: right; float: right; position: relative; margin-top: 25px; border: 1px solid #fff; max-width: 540px; max-height: 100px; overflow: hidden; }
-            #logo:hover, #logo.edit { border: 1px solid #000; margin-top: 0px; max-height: 125px; }
+            
             #logoctr { display: none; }            
             #logohelp { text-align: left; display: none; font-style: italic; padding: 10px 5px;}
             #logohelp input { margin-bottom: 5px; }
@@ -60,6 +60,7 @@
 
             .delete-wpr { position: relative; }
             .delete { display: block; color: #000; text-decoration: none; position: absolute; background: #EEEEEE; font-weight: bold; padding: 0px 3px; border: 1px solid; top: -6px; left: -22px; font-family: Verdana; font-size: 12px; }
+            @page { size: auto;  margin: 0mm; width: 800px; margin: 0 auto;}
         </style>
 
     </head>
@@ -106,7 +107,7 @@
                     </tr>
                     <tr>
 
-                        <td class="meta-head">Order Date</td>
+                        <td class="meta-head">Delivery Date</td>
                         <td><?php echo isset($orders_list[0]['deliverydate']) ? $orders_list[0]['deliverydate'] : ""; ?></td>
                     </tr>
                     <tr>
@@ -122,8 +123,7 @@
 
                 <tr>
                     <th>Product Name</th>
-                    <th>Size</th>           
-                    <th>Meter</th>           
+                    <th>Product Types</th>  
                     <th>Quantity</th>
                     <th>Price</th>
 
@@ -131,40 +131,22 @@
 
                 <tr class="item-row">                    
                     <td class="item-name"><?php echo isset($orders_list[0]['productname']) ? $orders_list[0]['productname'] : ""; ?></td>
-                    <td><?php echo isset($orders_list[0]['psize']) ? $orders_list[0]['psize'] : ""; ?></td>
-                    <td><?php echo isset($orders_list[0]['meter']) ? $orders_list[0]['meter'] : ""; ?></td>
+                    <td><?php $type= array_column($typeresult, 'typename'); echo implode(", ",$type);?></td>                    
                     <td><?php echo isset($orders_list[0]['quantity']) ? $orders_list[0]['quantity'] : ""; ?></td>
                     <td class="price"><?php echo isset($orders_list[0]['price']) ? number_format($orders_list[0]['price'], 2) : ""; ?></td>                    
-                </tr>		  
-
-
-
+                </tr>	
                 <tr>
-
-                    <td colspan="2" class="blank"> <?php if (count($typeresult)) { ?>
-                            <h4>Product Types</h4><span>
-                                <div>
-                                    <?php
-                                    foreach ($typeresult as $key => $value) {
-
-                                        echo $value['typename'] . ",";
-                                    }
-                                    ?>
-                                </div>
-                            <?php }
-                            ?>                             
-                            </td>
-                    <td colspan="2" class="total-line">Total</td>
+                  
+                    <td colspan="3" class="total-line">Total</td>
                     <td class="total-value"><div id="total"><?php echo isset($orders_list[0]['total_amount']) ? number_format($orders_list[0]['total_amount'], 2) : ""; ?></div></td>
                 </tr>
-                <tr>
-                    <td colspan="2" class="blank"> </td>
-                    <td colspan="2" class="total-line">Amount Paid</td>
+                <tr>                    
+                    <td colspan="3" class="total-line">Amount Paid</td>
 
                     <td class="total-value"><?php echo isset($orders_list[0]['paid_amount']) ? number_format($orders_list[0]['paid_amount'], 2) : ""; ?></td>
                 </tr>
                 <tr>
-                    <td colspan="2" class="blank"> <?php if (count($measurements)) { ?>
+<!--                    <td colspan="2" class="blank"> <?php if (count($measurements)) { ?>
                                 <h4>Measurement Details</h4><span>
                                     <div>
     <?php
@@ -177,8 +159,8 @@
     ?>
                                     </div>
 <?php }
-?></td>
-                    <td colspan="2" class="total-line balance">Balance Due</td>
+?></td>-->
+                    <td colspan="3" class="total-line balance">Balance Due</td>
                     <td class="total-value balance"><div class="due"><?php echo isset($orders_list[0]['balance_amount']) ? number_format($orders_list[0]['balance_amount'], 2) : ""; ?></div></td>
                 </tr>
 

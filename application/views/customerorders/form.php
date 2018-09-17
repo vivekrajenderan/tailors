@@ -61,19 +61,20 @@
                             <div class="clearfix" id="measureval">                                
 
                             </div>
-                            <br>
+                            <br>                              
                             <div class="form-group form-float">
-                                <label class="form-label">Order Date</label>
+                                <label class="form-label">Model Price</label>
                                 <div class="form-line">
-                                    <input type="text" name="orderdate" id="orderdate" class="datepicker form-control" placeholder="Please choose order date..." value="<?php echo isset($order_list[0]['orderdate']) ? $order_list[0]['orderdate'] : ''; ?>">                                   
+                                    <input type="text" class="form-control totalamount" name="modelprice" id="modelprice" value="<?php echo isset($order_list[0]['modelprice']) ? $order_list[0]['modelprice'] : ''; ?>">
+
                                 </div>
-                            </div>  
+                            </div>
                             <div class="form-group form-float">
-                                <label class="form-label">Delivery Date</label>
+                                <label class="form-label">Description</label>
                                 <div class="form-line">
-                                    <input type="text" name="deliverydate" id="deliverydate" class="datepicker form-control" placeholder="Please choose delivery date..." value="<?php echo isset($order_list[0]['deliverydate']) ? $order_list[0]['deliverydate'] : ''; ?>">                                   
+                                    <textarea name="description" id="description" cols="30" rows="5" class="form-control no-resize"><?php echo isset($order_list[0]['description']) ? $order_list[0]['description'] : ''; ?></textarea>
                                 </div>
-                            </div>  
+                            </div>
                             <div class="form-group form-float">
                                 <label class="form-label">Price</label>
                                 <div class="form-line">
@@ -107,7 +108,18 @@
                                     <input type="text" class="form-control" name="balance_amount" id="balance_amount" value="<?php echo isset($order_list[0]['balance_amount']) ? $order_list[0]['balance_amount'] : ''; ?>" disabled="" required>
                                 </div>
                             </div>
-                            
+                            <div class="form-group form-float">
+                                <label class="form-label">Order Date</label>
+                                <div class="form-line">
+                                    <input type="text" name="orderdate" id="orderdate" class="datepicker form-control" placeholder="Please choose order date..." value="<?php echo isset($order_list[0]['orderdate']) ? $order_list[0]['orderdate'] : ''; ?>">                                   
+                                </div>
+                            </div>  
+                            <div class="form-group form-float">
+                                <label class="form-label">Delivery Date</label>
+                                <div class="form-line">
+                                    <input type="text" name="deliverydate" id="deliverydate" class="datepicker form-control" placeholder="Please choose delivery date..." value="<?php echo isset($order_list[0]['deliverydate']) ? $order_list[0]['deliverydate'] : ''; ?>">                                   
+                                </div>
+                            </div>
 
                             <a href="<?php echo base_url(); ?>customerorders" class="btn bg-blue-grey waves-effect" onclick="return confirm('Are you sure cancel the data?')">Cancel</a>
                             <button class="btn btn-primary waves-effect" type="submit">SUBMIT</button>
@@ -263,9 +275,16 @@
                                                     }
                                         });
                                     }
-                                }                                
+                                }
                                 $(".totalamount").on("click blur change", function (event) {
+                                    totalamount = 0;
                                     var totalamount = $("#price").val() * $("#quantity").val();
+                                    if ($("#modelprice").val() != "")
+                                    {
+                                        console.log($("#modelprice").val());
+                                        totalamount = parseInt(totalamount) + parseInt($("#modelprice").val());
+                                    }
+                                    console.log(totalamount);
                                     $("#total_amount").val(totalamount);
                                 });
                                 $(".balanceamount").on("click blur change", function (event) {
