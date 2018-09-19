@@ -42,13 +42,15 @@
                                     <tr>
                                         <th>Name</th>
                                         <th>Price</th>                      
+                                        <th>Type</th>                      
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tfoot>
                                     <tr>
                                         <th>Name</th>
-                                        <th>Price</th>                                        
+                                        <th>Price</th>
+                                        <th>Type</th>
                                         <th>Action</th>
                                     </tr>
                                 </tfoot>
@@ -57,6 +59,7 @@
                                         <tr>
                                             <td><?php echo isset($lists['productname']) ? $lists['productname'] : ""; ?></td>
                                             <td><?php echo isset($lists['price']) ? $lists['price'] : ""; ?></td>
+                                            <td><?php echo isset($lists['ptype']) ? $lists['ptype'] : ""; ?></td>
 <!--                                            <td><?php
                                                 if (isset($lists['product_image']) && !empty($lists['product_image'])) {
                                                     if (file_exists("./upload/products/" . $lists['product_image'])) { ?>
@@ -137,7 +140,7 @@
                                                 }
                                             ],
                                             "aoColumnDefs": [
-                                                {'bSortable': false, 'aTargets': [2]}  //Not sorting the first and last columns
+                                                {'bSortable': false, 'aTargets': [3]}  //Not sorting the first and last columns
 
                                             ],
                                         });

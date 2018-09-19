@@ -26,7 +26,7 @@ class Producttype extends CI_Controller {
     }
 
     public function add($id = NULL) {
-        $products_list = $this->products_model->lists();
+        $products_list = $this->products_model->outsorcinglists();
         $producttype_list = array();
         $measurements_list = array();
         if ($id != "") {

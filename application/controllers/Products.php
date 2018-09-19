@@ -55,7 +55,8 @@ class Products extends CI_Controller {
                 return false;
             } else {
                 $data = array('productname' => trim($this->input->post('productname')),
-                    'price' => trim($this->input->post('price'))
+                    'price' => trim($this->input->post('price')),
+                    'ptype' => trim($this->input->post('ptype'))
                 );
                 $products_list = array();
                 if ($id != "") {

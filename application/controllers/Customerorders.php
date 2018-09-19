@@ -77,7 +77,7 @@ class Customerorders extends CI_Controller {
     public function add($id = NULL) {
         $order_list = array();
         $customer_list = $this->customer_model->lists();
-        $products_list = $this->products_model->lists();
+        $products_list = $this->products_model->outsorcinglists();
         if ($id != "") {
             $order_list = $this->orders_model->customerorderlists($id);
 

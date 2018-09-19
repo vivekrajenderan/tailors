@@ -18,6 +18,27 @@
                         </div>
                         <form id="productform" method="POST" name="productform" action="<?php echo base_url() . 'products/ajaxsave/' . $id; ?>" enctype="multipart/form-data">
                             <div class="form-group form-float">
+                                <label class="form-label">Type</label>
+                                <div class="form-line">
+                                    <select class="form-control show-tick" id="ptype" name="ptype">
+                                        <option value="">-- Please Type--</option>
+                                        <option value="Outsourcing" <?php
+                                        if (isset($products_list[0]['ptype']))
+                                            if ($products_list[0]['ptype'] == "Outsourcing") {
+                                                echo "selected";
+                                            }
+                                        ?>>Outsourcing</option>
+                                        <option value="Insourcing" <?php
+                                        if (isset($products_list[0]['ptype']))
+                                            if ($products_list[0]['ptype'] == "Insourcing") {
+                                                echo "selected";
+                                            }
+                                        ?>>Insourcing</option>
+
+                                    </select> 
+                                </div>
+                            </div>
+                            <div class="form-group form-float">
                                 <div class="form-line">
                                     <input type="text" class="form-control" name="productname" id="productname" value="<?php echo isset($products_list[0]['productname']) ? $products_list[0]['productname'] : ''; ?>" required>
                                     <label class="form-label">Name</label>
@@ -135,6 +156,9 @@
                                             $(element).parents('.form-group').append(error);
                                         },
                                         rules: {
+                                            ptype: {
+                                                required: true
+                                            },
                                             productname: {
                                                 required: true,
                                                 minlength: 3,
@@ -149,6 +173,10 @@
                                             }
                                         },
                                         messages: {
+                                            ptype: {
+                                                required: "Please choose product type"
+
+                                            },
                                             productname: {
                                                 required: "Please enter product name"
 

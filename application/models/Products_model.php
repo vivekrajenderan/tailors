@@ -4,7 +4,7 @@ class Products_model extends CI_Model {
  
     function __construct() {
         parent::__construct();
-        date_default_timezone_set('America/New_York');
+        date_default_timezone_set('Asia/Kolkata');
         $this->load->library('table', 'session');
         $this->load->database();
     }
@@ -15,7 +15,35 @@ class Products_model extends CI_Model {
         $this->db->from('products');
         if ($id != "") {
             $this->db->where('md5(id)', $id);
+        }        
+        $this->db->where('dels', 0);
+        $query = $this->db->get();
+
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
+        } else {
+            return array();
         }
+    }
+    public function insorcinglists() {
+
+        $this->db->select('*');
+        $this->db->from('products');
+        $this->db->where('ptype', 'Insourcing');
+        $this->db->where('dels', 0);
+        $query = $this->db->get();
+
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
+        } else {
+            return array();
+        }
+    }
+    public function outsorcinglists() {
+
+        $this->db->select('*');
+        $this->db->from('products');
+        $this->db->where('ptype', 'Outsourcing');
         $this->db->where('dels', 0);
         $query = $this->db->get();
 

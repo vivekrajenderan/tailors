@@ -44,7 +44,7 @@
                                 </div>
                             </div>                   
                              
-                            <a href="<?php echo base_url(); ?>reports/otherexpenses" class="btn bg-blue-grey waves-effect" onclick="return confirm('Are you sure cancel the data?')">Cancel</a>
+                            <a href="<?php echo base_url(); ?>expenses" class="btn bg-blue-grey waves-effect" onclick="return confirm('Are you sure cancel the data?')">Cancel</a>
                             <button class="btn btn-primary waves-effect" type="submit">SUBMIT</button>
                         </form>
                     </div>
