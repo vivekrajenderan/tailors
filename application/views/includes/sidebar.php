@@ -116,6 +116,12 @@
                             <li>
                                 <a href="<?php echo base_url() . 'expenses'; ?>">Expenses</a>
                             </li>                        
+                            <li>
+                                <a href="<?php echo base_url() . 'income'; ?>">Income</a>
+                            </li>                        
+                            <li>
+                                <a href="<?php echo base_url() . 'income/cashonhand'; ?>">Cash On Hand</a>
+                            </li>                        
                         </ul>
                     </li>    
                 <?php } else { ?>                    

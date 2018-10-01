@@ -2,7 +2,7 @@
     <div class="container-fluid">
         <div class="block-header">
             <h2>
-                Expenses Add                  
+                Income Add                  
             </h2>
         </div>
         <!-- Basic Validation -->
@@ -10,18 +10,18 @@
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div class="card">
                     <div class="header">
-                        <h2><?php echo ($id != "") ? "Edit" : "Add"; ?> Expenses</h2>                        
+                        <h2><?php echo ($id != "") ? "Edit" : "Add"; ?> Income</h2>                        
                     </div>
                     <div class="body">
                         <div class="alert bg-red" style="display:none;">
 
                         </div>
-                        <form id="expenseform" method="POST" name="expenseform" action="<?php echo base_url() . 'expenses/ajaxsave/' . $id; ?>" enctype="multipart/form-data">
+                        <form id="expenseform" method="POST" name="expenseform" action="<?php echo base_url() . 'income/ajaxsave/' . $id; ?>" enctype="multipart/form-data">
                             <div class="form-group form-float">
-                                <label class="form-label">Expense Type</label>
+                                <label class="form-label">Income Type</label>
                                 <div class="form-line">
                                     <select class="form-control show-tick" id="reference_id" name="reference_id">
-                                        <option value="">-- Please Expense Type--</option>
+                                        <option value="">-- Please Income Type--</option>
                                         <?php
                                         foreach ($type_list as $plist) {
                                             $selecteduser = "";
@@ -34,7 +34,7 @@
                                         }
                                         ?>
 
-                                    </select> 
+                                    </select>
                                 </div>
                             </div>
                             <div class="form-group form-float">
@@ -44,7 +44,7 @@
                                 </div>
                             </div>                   
                              
-                            <a href="<?php echo base_url(); ?>expenses" class="btn bg-blue-grey waves-effect" onclick="return confirm('Are you sure cancel the data?')">Cancel</a>
+                            <a href="<?php echo base_url(); ?>income" class="btn bg-blue-grey waves-effect" onclick="return confirm('Are you sure cancel the data?')">Cancel</a>
                             <button class="btn btn-primary waves-effect" type="submit">SUBMIT</button>
                         </form>
                     </div>
@@ -88,7 +88,7 @@
 
                                             },
                                             reference_id: {
-                                                required: "Please choose the expense type"
+                                                required: "Please choose the Income type"
 
                                             }
 
@@ -104,7 +104,7 @@
 
                                                 if (response.status == "1")
                                                 {
-                                                    window.location = "<?php echo base_url() . 'expenses'; ?>";
+                                                    window.location = "<?php echo base_url() . 'income'; ?>";
                                                 } else
                                                 {
                                                     $('.bg-red').show();

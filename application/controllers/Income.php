@@ -2,13 +2,13 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Expenses extends CI_Controller {
+class Income extends CI_Controller {
 
     public function __construct() {
 
         parent::__construct();
         
-        $this->load->model('expenses_model');        
+        $this->load->model('income_model');        
         $this->load->library('form_validation');
         if ($this->session->userdata('logged_in') == False) {
             redirect(base_url() . 'login/', 'refresh');
@@ -16,28 +16,28 @@ class Expenses extends CI_Controller {
     }  
 
     public function index() {        
-        $expenseslists = $this->expenses_model->otherexpenseslists();
-        $type_list = $this->expenses_model->accountlists();
+        $expenseslists = $this->income_model->incomelists();
+        $type_list = $this->income_model->accountlists();
         $data = array('expenseslists' => $expenseslists, 'type_list' => $type_list);
         $this->load->view('includes/header');
         $this->load->view('includes/sidebar');
-        $this->load->view('expenses/expenses', $data);
+        $this->load->view('income/income', $data);
         $this->load->view('includes/footer');
     }
 
     public function add($id = NULL) {
         $expenseslists = array();
         if ($id != "") {
-            $expenseslists = $this->expenses_model->otherexpenseslists($id);
+            $expenseslists = $this->income_model->incomelists($id);
             if (count($expenseslists) == 0) {
-                redirect(base_url() . 'expenses', 'refresh');
+                redirect(base_url() . 'income', 'refresh');
             }
         }
-        $type_list = $this->expenses_model->accountlists();
+        $type_list = $this->income_model->accountlists();
         $data = array('expenseslists' => $expenseslists, 'id' => $id, 'type_list' => $type_list);
         $this->load->view('includes/header');
         $this->load->view('includes/sidebar');
-        $this->load->view('expenses/expensesadd', $data);
+        $this->load->view('income/incomeadd', $data);
         $this->load->view('includes/footer');
     }
 
@@ -46,31 +46,30 @@ class Expenses extends CI_Controller {
 
         if (($this->input->server('REQUEST_METHOD') == 'POST')) {
             $this->form_validation->set_rules('amount', 'Amount', 'trim|required|min_length[2]|max_length[10]');
-            $this->form_validation->set_rules('reference_id', 'Expense Type', 'trim|required');
+            $this->form_validation->set_rules('reference_id', 'Income Type', 'trim|required');
             if ($this->form_validation->run() == FALSE) {
                 echo json_encode(array('status' => 0, 'msg' => validation_errors()));
                 return false;
             } else {
-                $type_list = $this->expenses_model->accountlists($this->input->post('reference_id'));
+                $type_list = $this->income_model->accountlists($this->input->post('reference_id'));
                 $account_type=isset($type_list[0]['name'])?$type_list[0]['name']:"";
-                $data = array('amount' => trim($this->input->post('amount'))*-1,
+                $data = array('amount' => trim($this->input->post('amount')),
                     'reference_id' => trim($this->input->post('reference_id')),
                     'account_type' => $account_type,
-                    'transtype' => 'expense'
-                    
+                    'transtype' => 'income'
                 );
                 if ($id != "") {
                     $data['updated_on'] = date('Y-m-d H:i:s');
-                    $saveexpenses = $this->expenses_model->updateexpenses($data, $id);
+                    $saveexpenses = $this->income_model->updateincome($data, $id);
                 } else {
                     $data['created_on'] = date('Y-m-d H:i:s');
-                    $saveexpenses = $this->expenses_model->saveexpenses($data);
+                    $saveexpenses = $this->income_model->saveincome($data);
                 }
                 if ($saveexpenses == 1) {
-                    $this->session->set_flashdata('SucMessage', 'Expenses Saved Successfully');
+                    $this->session->set_flashdata('SucMessage', 'Income Saved Successfully');
                     echo json_encode(array('status' => 1));
                 } else {
-                    echo json_encode(array('status' => 0, 'msg' => 'Expenses Saved Not Successfully'));
+                    echo json_encode(array('status' => 0, 'msg' => 'Income Saved Not Successfully'));
                 }
             }
         }
@@ -78,16 +77,28 @@ class Expenses extends CI_Controller {
 
     public function delete($id = NULL) {
         if ($id != "") {
-            $deleteExpenses = $this->expenses_model->deleteexpenses($id);
+            $deleteExpenses = $this->income_model->deleteincome($id);
             if ($deleteExpenses == "1") {
-                $this->session->set_flashdata('SucMessage', 'Expenses has been deleted successfully!!!');
+                $this->session->set_flashdata('SucMessage', 'Income has been deleted successfully!!!');
             } else {
-                $this->session->set_flashdata('ErrorMessages', 'Expenses has not been deleted successfully!!!');
+                $this->session->set_flashdata('ErrorMessages', 'Income has not been deleted successfully!!!');
             }
-            redirect(base_url() . 'expenses', 'refresh');
+            redirect(base_url() . 'income', 'refresh');
         } else {
-            redirect(base_url() . 'expenses', 'refresh');
+            redirect(base_url() . 'income', 'refresh');
         }
     }
 
+    public function cashonhand() {        
+        if (!isset($_POST['fromdate']) && empty($_POST['fromdate']) && !isset($_POST['todate']) && empty($_POST['todate'])) {
+            $_POST['fromdate']= date('Y-m-d');
+            $_POST['todate']= date('Y-m-d');
+        } 
+        $cashlist = $this->income_model->cashlist();  
+        $data = array('cashlist' => $cashlist);
+        $this->load->view('includes/header');
+        $this->load->view('includes/sidebar');
+        $this->load->view('income/cashonhand', $data);
+        $this->load->view('includes/footer');
+    }
 }

@@ -2,7 +2,7 @@
     <div class="container-fluid">
         <div class="block-header">
             <h2>
-                Expenses Report            
+                Income Report            
             </h2>
         </div>        
         <!-- Exportable Table -->
@@ -13,16 +13,16 @@
                         <div class="row">
                             <div class="col-md-6 col-xs-8">
                                 <h2>
-                                    Expenses Report
+                                    Income Report
                                 </h2>
                             </div>  
                             <div class="col-md-6 col-xs-4">
-                                <div class="pull-right"><button onclick="location.href = '<?php echo base_url() . "expenses/add"; ?>';" type="button" class="btn bg-cyan waves-effect">Add Expenses</button></div>
+                                <div class="pull-right"><button onclick="location.href = '<?php echo base_url() . "income/add"; ?>';" type="button" class="btn bg-cyan waves-effect">Add Income</button></div>
                             </div>
                         </div>
                     </div>
                     <div class="body">
-                        <form id="orderform" method="POST" name="orderform" action="<?php echo base_url() . 'expenses/index/'; ?>" style="margin-bottom: 30px;">
+                        <form id="orderform" method="POST" name="orderform" action="<?php echo base_url() . 'income/index/'; ?>" style="margin-bottom: 30px;">
                             <div class="row">
                                 <div class="col-md-3">
                                     <div class="form-group form-float">
@@ -42,7 +42,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group form-float">
-                                        <label class="form-label">Expense Type</label>
+                                        <label class="form-label">Income Type</label>
                                         <div class="form-line">
                                             <input type="text" name="typename" id="typename" class="form-control customertext" placeholder="Please select type" value="<?php echo isset($_POST['typename']) ? $_POST['typename'] : ''; ?>">                                   
                                             <input type="hidden" name="reference_id" id="reference_id" class="form-control" value="<?php echo isset($_POST['reference_id']) ? $_POST['reference_id'] : ''; ?>">                                   
@@ -70,14 +70,14 @@
                                     <?php
                                     $total_amount = 0;
                                     foreach ($expenseslists as $key => $lists) {
-                                        $total_amount += $lists['amount']*-1;
+                                        $total_amount += $lists['amount'];
                                         ?>
                                         <tr>
                                             <td><?php echo isset($lists['name']) ? $lists['name'] : ""; ?></td>
                                             <td><?php echo isset($lists['created_on']) ? $lists['created_on'] : ""; ?></td>                                            
-                                            <td><?php echo isset($lists['amount']) ? $lists['amount']*-1 : ""; ?></td>
+                                            <td><?php echo isset($lists['amount']) ? $lists['amount'] : ""; ?></td>
                                             <td>
-                                                <a href="<?php echo base_url() . 'expenses/add/' . md5($lists['id']); ?>" title="Edit" ><i class="material-icons" style="font-size: 20px;">edit</i></a>&nbsp;<a href="<?php echo base_url() . 'expenses/delete/' . md5($lists['id']); ?>" title="Delete"><i class="material-icons" style="font-size: 20px;">delete</i></a>
+                                                <a href="<?php echo base_url() . 'income/add/' . md5($lists['id']); ?>" title="Edit" ><i class="material-icons" style="font-size: 20px;">edit</i></a>&nbsp;<a href="<?php echo base_url() . 'expenses/delete/' . md5($lists['id']); ?>" title="Delete"><i class="material-icons" style="font-size: 20px;">delete</i></a>
                                             </td>
                                         </tr>       
                                     <?php } ?>
@@ -197,24 +197,7 @@
 
                                             ],
                                         });
-                                    });
-                                    function vieworders(orderid)
-                                    {
-                                        if (orderid != "")
-                                        {
-                                            $.ajax({
-                                                type: "POST",
-                                                url: "<?php echo base_url(); ?>customerorders/vieworders",
-                                                data: "order_id=" + orderid,
-                                                async: false,
-                                                success:
-                                                        function (msg) {
-                                                            $("#showorder").html(msg);
-                                                            $('#defaultModal').modal('show');
-                                                        }
-                                            });
-                                        }
-                                    }
+                                    });                                    
 
                                     $(function () {
 
