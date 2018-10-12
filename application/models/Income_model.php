@@ -97,6 +97,7 @@ class Income_model extends CI_Model {
             } else {
                 $this->db->where('DATE(staffsalary.created_on) <=', date('Y-m-d'));
             }
+            $this->db->where('staffsalary.dels', 0);
             $query1 = $this->db->get();
             
             if ($query1->num_rows() > 0) {
