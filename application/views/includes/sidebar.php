@@ -51,8 +51,11 @@
                             <li>
                                 <a href="<?php echo base_url() . 'users'; ?>">List</a>
                             </li>                        
-                            <li>
+<!--                            <li>
                                 <a href="<?php echo base_url() . 'users/staffbalance'; ?>">Balance</a>
+                            </li>                        -->
+                            <li>
+                                <a href="<?php echo base_url() . 'users/staffsalary'; ?>">Salary</a>
                             </li>                        
                         </ul>
                     </li>

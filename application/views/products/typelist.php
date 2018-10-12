@@ -58,7 +58,7 @@
                                             <td><?php echo isset($lists['productname']) ? $lists['productname'] : ""; ?></td>
                                             <td><?php echo isset($lists['typename']) ? $lists['typename'] : ""; ?></td>
                                             <td>
-                                                <a href="<?php echo base_url() . 'producttype/add/' . md5($lists['id']); ?>" title="Edit" ><i class="material-icons" style="font-size: 20px;">edit</i></a>&nbsp;<a href="<?php echo base_url() . 'producttype/delete/' . md5($lists['id']); ?>" title="Delete"><i class="material-icons" style="font-size: 20px;">delete</i></a>
+                                                <a href="<?php echo base_url() . 'producttype/add/' . md5($lists['id']); ?>" title="Edit" ><i class="material-icons" style="font-size: 20px;">edit</i></a>&nbsp;<a href="<?php echo base_url() . 'producttype/delete/' . md5($lists['id']); ?>" title="Delete" onclick="return confirm('Are you sure delete the data?')"><i class="material-icons" style="font-size: 20px;">delete</i></a>
                                             </td>                                        
 
                                         </tr>       

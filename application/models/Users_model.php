@@ -97,4 +97,114 @@ class Users_model extends CI_Model {
         return ($this->db->affected_rows() > 0);
     }
 
+    public function salaryproductvalues($salaryid = NULL) {
+        $result = array();
+        $this->db->select("*,'' as quantity,'' as price,'' as typevalue");
+        $this->db->from('products');
+        $this->db->where('ptype', 'Insourcing');
+        $this->db->where('dels', 0);
+        if (isset($_POST['product_id']) && !empty($_POST['product_id'])) {
+            $this->db->where('id', $_POST['product_id']);
+        }
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            $result = $query->result_array();
+            if (!empty($salaryid)) {
+                foreach ($result as $key => $value) {
+                    $typval = array();
+                    $this->db->select("*");
+                    $this->db->from('salaryproductdetails');
+                    $this->db->where('md5(salary_id)', $salaryid);
+                    $this->db->where('product_id', $value['id']);
+                    $query1 = $this->db->get();
+                    if ($query1->num_rows() > 0) {
+                        $productdetails = $query1->result_array();
+                        $result[$key]['typevalue'] = 'checked';
+                        $result[$key]['quantity'] = $productdetails[0]['quantity'];
+                        $result[$key]['price'] = $productdetails[0]['quantity'];
+                    }
+                }
+            }
+            return $result;
+        } else {
+            return array();
+        }
+    }
+
+    public function savesallary($set_data) {
+        $this->db->insert('staffsalary', $set_data);
+        return ($this->db->affected_rows() > 0) ? $this->db->insert_id() : 0;
+    }
+
+    public function updatesallary($set_data, $id) {
+        $this->db->where('md5(id)', $id);
+        $this->db->update("staffsalary", $set_data);
+        return 1;
+    }
+
+    public function deletesallaryproductdetails($id) {
+        $this->db->where('md5(salary_id)', $id);
+        $this->db->delete("salaryproductdetails");
+        return ($this->db->affected_rows() > 0);
+    }
+
+    public function savesallaryproductdetails($set_data) {
+        $this->db->insert('salaryproductdetails', $set_data);
+        return ($this->db->affected_rows() > 0);
+    }
+
+    public function salarylists($id = NULL) {
+
+        $this->db->select('staffsalary.*,users.firstname,users.lastname,users.mobileno');
+        $this->db->from('staffsalary');
+        $this->db->join('users', 'staffsalary.user_id = users.id');
+        if ($id != "") {
+            $this->db->where('md5(staffsalary.id)', $id);
+        }
+        if (isset($_POST['fromdate']) && !empty($_POST['fromdate'])) {
+            $this->db->where('DATE(staffsalary.created_on) >=', $_POST['fromdate']);
+        }
+        if (isset($_POST['todate']) && !empty($_POST['todate'])) {
+            $this->db->where('DATE(staffsalary.created_on) <=', $_POST['todate']);
+        }
+        if (isset($_POST['user_id']) && !empty($_POST['user_id']) && isset($_POST['username']) && !empty($_POST['username'])) {
+            $this->db->where('staffsalary.user_id', $_POST['user_id']);
+        }
+        $this->db->where('staffsalary.dels', 0);
+        $this->db->order_by('staffsalary.id', 'desc');
+        $query = $this->db->get();
+
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
+        } else {
+            return array();
+        }
+    }
+
+    public function viewsalarylists($id = NULL) {
+
+        $this->db->select('staffsalary.*,users.firstname,users.lastname,users.mobileno');
+        $this->db->from('staffsalary');
+        $this->db->join('users', 'staffsalary.user_id = users.id');
+        if ($id != "") {
+            $this->db->where('md5(staffsalary.user_id)', $id);
+        }
+        $this->db->where('staffsalary.dels', 0);
+        $this->db->where('staffsalary.status', 0);
+        $this->db->order_by('staffsalary.id', 'desc');
+        $query = $this->db->get();
+
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
+        } else {
+            return array();
+        }
+    }
+
+    public function updateusersallary($set_data, $id) {
+        $this->db->where('md5(user_id)', $id);
+        $this->db->update("staffsalary", $set_data);
+        return 1;
+    }
+
 }

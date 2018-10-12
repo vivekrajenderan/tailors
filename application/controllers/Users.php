@@ -227,6 +227,114 @@ class Users extends CI_Controller {
         }
     }
 
+    public function staffsalary() {
+        if (!isset($_POST['fromdate']) && empty($_POST['fromdate']) && !isset($_POST['todate']) && empty($_POST['todate'])) {
+            $_POST['fromdate'] = date('Y-m-d');
+            $_POST['todate'] = date('Y-m-d');
+        }
+        $balance_lists = $this->users_model->salarylists();
+        $list = $this->users_model->lists();
+        $user_list = array();
+        foreach ($list as $key => $value) {
+            $user_list[] = array('id' => $value['id'], 'name' => $value['firstname'] . '' . $value['lastname']);
+        }
+        $data = array('balance_lists' => $balance_lists, 'user_list' => $user_list);
+        $this->load->view('includes/header');
+        $this->load->view('includes/sidebar');
+        $this->load->view('users/salarylist', $data);
+        $this->load->view('includes/footer');
+    }
+
+    public function staffsalaryadd($id = NULL) {
+        $balance_list = array();
+        if ($id != "") {
+            $balance_list = $this->users_model->salarylists($id);
+            if (count($balance_list) == 0) {
+                redirect(base_url() . 'users/staffbalance', 'refresh');
+            }
+        }
+        $users_list = $this->users_model->lists();
+        $product_list = $this->users_model->salaryproductvalues($id);
+        $data = array('balance_list' => $balance_list, 'id' => $id, 'users_list' => $users_list, 'product_list' => $product_list);
+        $this->load->view('includes/header');
+        $this->load->view('includes/sidebar');
+        $this->load->view('users/salary', $data);
+        $this->load->view('includes/footer');
+    }
+
+    public function ajaxsalarysave($id = NULL) {
+
+
+        if (($this->input->server('REQUEST_METHOD') == 'POST')) {
+            $this->form_validation->set_rules('debitamount', 'Debit Amount', 'trim|required|min_length[1]|max_length[10]');
+            $this->form_validation->set_rules('user_id', 'Staff', 'trim|required');
+            if ($this->form_validation->run() == FALSE) {
+                echo json_encode(array('status' => 0, 'msg' => validation_errors()));
+                return false;
+            } else {
+                $data = array('debitamount' => trim($this->input->post('debitamount')),
+                    'user_id' => trim($this->input->post('user_id'))
+                );
+                if ($id != "") {
+                    $data['updated_on'] = date('Y-m-d H:i:s');
+                    $saveproduct = $this->users_model->updatesallary($data, $id);
+                    $salaryid = $this->input->post('sallary_id');
+                    $this->savesalaryproducts($salaryid);
+                } else {
+                    $data['created_on'] = date('Y-m-d H:i:s');
+                    $saveproduct = $this->users_model->savesallary($data);
+                    $this->savesalaryproducts($saveproduct);
+                }
+                if ($saveproduct) {
+                    $this->session->set_flashdata('SucMessage', 'Staff Sallary Saved Successfully');
+                    echo json_encode(array('status' => 1));
+                } else {
+                    echo json_encode(array('status' => 0, 'msg' => 'Staff Sallary Saved Not Successfully'));
+                }
+            }
+        }
+    }
+
+    public function savesalaryproducts($salaryid) {
+        if (isset($_POST['producttype']) && !empty($_POST['producttype'])) {
+            $totalbalance = 0;
+            $this->users_model->deletesallaryproductdetails(md5($salaryid));
+            foreach ($_POST['producttype'] as $key => $list) {
+                $quantity = $price = 0;
+                if (isset($_POST['quantity'][$key]) && !empty($_POST['quantity'][$key])) {
+                    $quantity = $_POST['quantity'][$key];
+                }
+                if (isset($_POST['price'][$key]) && !empty($_POST['price'][$key])) {
+                    $price = $_POST['price'][$key];
+                }
+                if (!empty($quantity) && !empty($price)) {
+                    $set_data = array('quantity' => $quantity, 'price' => $price, 'salary_id' => $salaryid, 'product_id' => $key);
+                    $totalbalance += ($quantity * $price);
+                    $this->users_model->savesallaryproductdetails($set_data);
+                }
+            }
+            $debitamount = (isset($_POST['debitamount']) && !empty($_POST['debitamount'])) ? $_POST['debitamount'] : 0;
+            $totalbalance = ($totalbalance - $debitamount);
+
+            $this->users_model->updatesallary(array('balanceamount' => $totalbalance, 'debitamount' => $debitamount), md5($salaryid));
+        }
+    }
+
+    public function staffsalarydelete($id = NULL) {
+        if ($id != "") {
+            $deleteUsers = $this->users_model->updatesallary(array('dels' => 1), $id);
+            $this->users_model->deletesallaryproductdetails($id);
+            if ($deleteUsers == "1") {
+                $this->session->set_flashdata('SucMessage', 'Staff Salary has been deleted successfully!!!');
+            } else {
+                $this->session->set_flashdata('ErrorMessages', 'Staff Salary has not been deleted successfully!!!');
+            }
+            redirect(base_url() . 'users/staffsalary', 'refresh');
+        } else {
+            redirect(base_url() . 'users/staffsalary', 'refresh');
+        }
+    }
+
     public function profile() {
         $users_list = array();
         if ($this->session->userdata('id')) {
@@ -324,13 +432,36 @@ class Users extends CI_Controller {
                     $data['updated_on'] = date('Y-m-d H:i:s');
                     $saveusers = $this->users_model->update($data, md5($this->session->userdata('id')));
                 }
-                if ($saveusers == 1) {                    
+                if ($saveusers == 1) {
                     $this->session->set_flashdata('SucMessage', 'New Password has been updated Successfully');
                     echo json_encode(array('status' => 1));
                 } else {
                     echo json_encode(array('status' => 0, 'msg' => 'New Password has not been updated Successfully'));
                 }
             }
+        }
+    }
+
+    public function viewsalary($userid) {
+        if ($userid != "") {
+            $balance_lists = $this->users_model->viewsalarylists($userid);            
+            $data = array('balance_lists' => $balance_lists, 'userid'=>$userid);
+            $this->load->view('includes/header');
+            $this->load->view('includes/sidebar');
+            $this->load->view('users/viewsalary', $data);
+            $this->load->view('includes/footer');
+        } else {
+            redirect(base_url() . 'users', 'refresh');
+        }
+    }
+    
+    public function staffsalarypaid($userid) {
+        if ($userid != "") {
+            $this->users_model->updateusersallary(array('status' => 1), $userid);
+            $this->session->set_flashdata('SucMessage', 'Salary has been paid Successfully');
+            redirect(base_url() . 'users', 'refresh');
+        } else {
+            redirect(base_url() . 'users', 'refresh');
         }
     }
 

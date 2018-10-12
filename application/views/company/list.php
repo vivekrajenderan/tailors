@@ -64,7 +64,7 @@
                                             <td><?php echo isset($lists['email']) ? $lists['email'] : ""; ?></td>
                                             <td><?php echo isset($lists['mobileno']) ? $lists['mobileno'] : ""; ?></td>       
                                             <td>
-                                                <a href="<?php echo base_url() . 'company/add/' . md5($lists['id']); ?>" title="Edit" ><i class="material-icons" style="font-size: 20px;">edit</i></a>&nbsp;<a href="<?php echo base_url() . 'company/delete/' . md5($lists['id']); ?>" title="Delete"><i class="material-icons" style="font-size: 20px;">delete</i></a>
+                                                <a href="<?php echo base_url() . 'company/add/' . md5($lists['id']); ?>" title="Edit" ><i class="material-icons" style="font-size: 20px;">edit</i></a>&nbsp;<a href="<?php echo base_url() . 'company/delete/' . md5($lists['id']); ?>" title="Delete" onclick="return confirm('Are you sure delete the data?')"><i class="material-icons" style="font-size: 20px;">delete</i></a>
                                             </td>                                        
 
                                         </tr>       

@@ -80,11 +80,30 @@ class Income_model extends CI_Model {
             $this->db->where('DATE(account_trans.created_on) <=', date('Y-m-d'));
         }
         $this->db->where('account_trans.dels', 0);
-//        $this->db->group_by('transtype');
+
         $query = $this->db->get();
-//        echo $this->db->last_query();die;
+
         if ($query->num_rows() > 0) {
-            return $query->result_array();
+            $returnresult = $query->result_array();
+            $this->db->select('sum(staffsalary.balanceamount-staffsalary.debitamount) as staffamount');
+            $this->db->from('staffsalary');
+            if (isset($_POST['fromdate']) && !empty($_POST['fromdate'])) {
+                $this->db->where('DATE(staffsalary.created_on) >=', $_POST['fromdate']);
+            } else {
+                $this->db->where('DATE(staffsalary.created_on) >=', date('Y-m-d'));
+            }
+            if (isset($_POST['todate']) && !empty($_POST['todate'])) {
+                $this->db->where('DATE(staffsalary.created_on) <=', $_POST['todate']);
+            } else {
+                $this->db->where('DATE(staffsalary.created_on) <=', date('Y-m-d'));
+            }
+            $query1 = $this->db->get();
+            
+            if ($query1->num_rows() > 0) {
+                $staffamount = $query1->result_array();                
+                $returnresult[0]['expensetotalamount'] -= isset($staffamount[0]['staffamount']) ? $staffamount[0]['staffamount'] : 0;
+            }
+            return $returnresult;
         } else {
             return array();
         }
