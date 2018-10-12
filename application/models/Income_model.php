@@ -85,7 +85,7 @@ class Income_model extends CI_Model {
 
         if ($query->num_rows() > 0) {
             $returnresult = $query->result_array();
-            $this->db->select('sum(staffsalary.balanceamount-staffsalary.debitamount) as staffamount');
+            $this->db->select('sum(staffsalary.balanceamount+staffsalary.debitamount) as staffamount');
             $this->db->from('staffsalary');
             if (isset($_POST['fromdate']) && !empty($_POST['fromdate'])) {
                 $this->db->where('DATE(staffsalary.created_on) >=', $_POST['fromdate']);
@@ -98,8 +98,8 @@ class Income_model extends CI_Model {
                 $this->db->where('DATE(staffsalary.created_on) <=', date('Y-m-d'));
             }
             $this->db->where('staffsalary.dels', 0);
-            $query1 = $this->db->get();
-            
+            $this->db->where('staffsalary.status', 1);
+            $query1 = $this->db->get();            
             if ($query1->num_rows() > 0) {
                 $staffamount = $query1->result_array();                
                 $returnresult[0]['expensetotalamount'] -= isset($staffamount[0]['staffamount']) ? $staffamount[0]['staffamount'] : 0;
