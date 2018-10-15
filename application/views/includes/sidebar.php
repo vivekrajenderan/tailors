@@ -113,9 +113,9 @@
                             <li>
                                 <a href="<?php echo base_url() . 'reports/customer'; ?>">Customer</a>
                             </li>                        
-                            <li>
+<!--                            <li>
                                 <a href="<?php echo base_url() . 'reports/staff'; ?>">Staff</a>
-                            </li>                        
+                            </li>                        -->
                             <li>
                                 <a href="<?php echo base_url() . 'expenses'; ?>">Expenses</a>
                             </li>                        
@@ -128,12 +128,12 @@
                         </ul>
                     </li>    
                 <?php } else { ?>                    
-                    <li>
+<!--                    <li>
                         <a href="<?php echo base_url() . 'users/staffbalance'; ?>">
                             <i class="material-icons">text_fields</i>
                             <span>Staff Balance</span>
                         </a>
-                    </li>                    
+                    </li>                    -->
                     <li class="active">
                         <a href="<?php echo base_url() . 'customer'; ?>">
                             <i class="material-icons">text_fields</i>
