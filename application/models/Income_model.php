@@ -66,6 +66,7 @@ class Income_model extends CI_Model {
     }
 
     public function cashlist() {
+        $returnresult = array();
         $this->db->select('SUM(case when transtype="expense" then COALESCE(amount,0) else 0 end) AS expensetotalamount,'
                 . 'SUM(case when transtype="income" then COALESCE(amount,0) else 0 end) AS incometotalamount');
         $this->db->from('account_trans');
@@ -84,29 +85,50 @@ class Income_model extends CI_Model {
         $query = $this->db->get();
 
         if ($query->num_rows() > 0) {
-            $returnresult = $query->result_array();
-            $this->db->select('sum(staffsalary.balanceamount+staffsalary.debitamount) as staffamount');
-            $this->db->from('staffsalary');
-            if (isset($_POST['fromdate']) && !empty($_POST['fromdate'])) {
-                $this->db->where('DATE(staffsalary.created_on) >=', $_POST['fromdate']);
-            } else {
-                $this->db->where('DATE(staffsalary.created_on) >=', date('Y-m-d'));
-            }
-            if (isset($_POST['todate']) && !empty($_POST['todate'])) {
-                $this->db->where('DATE(staffsalary.created_on) <=', $_POST['todate']);
-            } else {
-                $this->db->where('DATE(staffsalary.created_on) <=', date('Y-m-d'));
-            }
-            $this->db->where('staffsalary.dels', 0);
-            $this->db->where('staffsalary.status', 1);
-            $query1 = $this->db->get();            
-            if ($query1->num_rows() > 0) {
-                $staffamount = $query1->result_array();                
-                $returnresult[0]['expensetotalamount'] -= isset($staffamount[0]['staffamount']) ? $staffamount[0]['staffamount'] : 0;
-            }
-            return $returnresult;
+            $returnresult = $query->result_array();           
+        }
+        $this->db->select('COALESCE(sum(staffsalary.balanceamount+staffsalary.debitamount),0) as staffamount');
+        $this->db->from('staffsalary');
+        if (isset($_POST['fromdate']) && !empty($_POST['fromdate'])) {
+            $this->db->where('DATE(staffsalary.created_on) >=', $_POST['fromdate']);
         } else {
-            return array();
+            $this->db->where('DATE(staffsalary.created_on) >=', date('Y-m-d'));
+        }
+        if (isset($_POST['todate']) && !empty($_POST['todate'])) {
+            $this->db->where('DATE(staffsalary.created_on) <=', $_POST['todate']);
+        } else {
+            $this->db->where('DATE(staffsalary.created_on) <=', date('Y-m-d'));
+        }
+        $this->db->where('staffsalary.dels', 0);
+        $this->db->where('staffsalary.status', 1);
+        $query1 = $this->db->get();
+        //echo $this->db->last_query();die;
+        if ($query1->num_rows() > 0) {
+            $staffamount = $query1->result_array();
+            $returnresult[0]['expensetotalamount'] -= isset($staffamount[0]['staffamount']) ? $staffamount[0]['staffamount'] : 0;
+        }
+        return $returnresult;
+    }
+
+    public function getSalaryExpenseAmount() {
+        $this->db->select('sum(staffsalary.balanceamount+staffsalary.debitamount) as staffamount');
+        $this->db->from('staffsalary');
+        if (isset($_POST['fromdate']) && !empty($_POST['fromdate'])) {
+            $this->db->where('DATE(staffsalary.created_on) >=', $_POST['fromdate']);
+        } else {
+            $this->db->where('DATE(staffsalary.created_on) >=', date('Y-m-d'));
+        }
+        if (isset($_POST['todate']) && !empty($_POST['todate'])) {
+            $this->db->where('DATE(staffsalary.created_on) <=', $_POST['todate']);
+        } else {
+            $this->db->where('DATE(staffsalary.created_on) <=', date('Y-m-d'));
+        }
+        $this->db->where('staffsalary.dels', 0);
+        $this->db->where('staffsalary.status', 1);
+        $query1 = $this->db->get();
+        if ($query1->num_rows() > 0) {
+            $staffamount = $query1->result_array();
+            $returnresult[0]['expensetotalamount'] -= isset($staffamount[0]['staffamount']) ? $staffamount[0]['staffamount'] : 0;
         }
     }
 
