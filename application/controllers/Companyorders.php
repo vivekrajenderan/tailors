@@ -101,7 +101,7 @@ class Companyorders extends CI_Controller {
             $this->form_validation->set_rules('price', 'Price', 'trim|required|min_length[1]|max_length[10]');
             $this->form_validation->set_rules('quantity', 'Quantity', 'trim|required|min_length[1]|max_length[10]');
             //$this->form_validation->set_rules('total_amount', 'Total Amount', 'trim|required|min_length[1]|max_length[10]');
-            $this->form_validation->set_rules('paid_amount', 'Paid Amount', 'trim|required|min_length[1]|max_length[10]');
+            //$this->form_validation->set_rules('paid_amount', 'Paid Amount', 'trim|required|min_length[1]|max_length[10]');
             //$this->form_validation->set_rules('product_id', 'Product Name', 'trim|required');
             if ($this->form_validation->run() == FALSE) {
                 echo json_encode(array('status' => 0, 'msg' => validation_errors()));
@@ -122,9 +122,7 @@ class Companyorders extends CI_Controller {
                     'price' => trim($this->input->post('price')),
                     'psize' => trim($this->input->post('psize')),
                     'meter' => trim($this->input->post('meter')),
-                    'total_amount' => $this->input->post('price') * $this->input->post('quantity'),
-                    'paid_amount' => trim($this->input->post('paid_amount')),
-                    'balance_amount' => ($this->input->post('price') * $this->input->post('quantity')) - $this->input->post('paid_amount')
+                    'total_amount' => $this->input->post('price') * $this->input->post('quantity')
                 );
 
                 if ($id != "") {
@@ -144,7 +142,115 @@ class Companyorders extends CI_Controller {
             }
         }
     }
+    
+    public function measurementdetails() {
+        if (($this->input->server('REQUEST_METHOD') == 'POST')) {
+            $result = $this->orders_model->measurementvalues();
+            $html = "";
+            $typeresult = $this->orders_model->producttypevalues();
+            if (count($typeresult) > 0) {
+                $html .= '<div class="header"><h2>Product Types</h2></div><div class="row">';
+                foreach ($typeresult as $key => $value) {
+                    $html .= '<div class="col-md-4"><input type="checkbox" id="producttype_' . $key . '" name="producttype[' . $value['id'] . ']" class="chk-col-red" ' . $value['typevalue'] . '/><label for="producttype_' . $key . '">' . $value['typename'] . '</label></div>';
+                }
+                $html .= '</div>';
+            }
+            if (count($result)) {
+                $html .= '<div class="header"><h2>Measurement Detail</h2></div><div class="row">';
+                foreach ($result as $key => $value) {
+                    $html .= '<div class="col-md-3"><label for="email_address">' . $value['mname'] . '</label><div class="form-group">
+                                    <div class="form-line">
+                                        <input id="measurement_value' . $value['id'] . '" name="measurement_value[' . $value['id'] . ']" class="form-control" placeholder="value" type="text" value="' . $value['measurementvalue'] . '">
+                                    </div>
+                                </div></div>';
+                }
+                $html .= '</div>';
+            }
+            echo $html;
+        }
+    }
 
+    public function delete($id = NULL) {
+        if ($id != "") {
+            $deleteorder = $this->orders_model->update(array('dels' => 1), $id);
+            if ($deleteorder == "1") {
+                $this->session->set_flashdata('SucMessage', 'Order Details has been deleted successfully!!!');
+            } else {
+                $this->session->set_flashdata('ErrorMessages', 'Order Details has not been deleted successfully!!!');
+            }
+            redirect(base_url() . 'companyorders', 'refresh');
+        } else {
+            redirect(base_url() . 'companyorders', 'refresh');
+        }
+    }
+    
+    public function vieworders() {
+        if (($this->input->server('REQUEST_METHOD') == 'POST')) {
+            $html = "";
+            $orders_list = $this->orders_model->companyorderlists($_POST['order_id']);
+            if (count($orders_list)) {
+                $printurl = base_url() . 'companyorders/printorder?order_id=' . $_POST['order_id'];
+                $html .= '<div class="btn-group btn-group-justified"><a href="' . $printurl . '" class="btn bg-cyan waves-effect" target="_blank"><i class="material-icons">print</i><span>Print</span></a></div>';
+                $html .= '<div class="modal-header">
+                    <h4 class="modal-title" id="defaultModalLabel">' . $orders_list[0]['orderno'] . '</h4>
+                </div><div class="modal-body">
+                    <h4>Order Details</h4>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="col-md-6"><label>Name</label></div><div class="col-md-6">' . $orders_list[0]['name'] . '</div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="col-md-6"><label>Mobile No</label></div><div class="col-md-6">' . $orders_list[0]['mobileno'] . '</div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="col-md-6"><label>Price</label></div><div class="col-md-6">' . $orders_list[0]['price'] . '</div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="col-md-6"><label>Quantity</label></div><div class="col-md-6">' . $orders_list[0]['quantity'] . '</div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="col-md-6"><label>Total Amount</label></div><div class="col-md-6">' . $orders_list[0]['total_amount'] . '</div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="col-md-6"><label>Paid Amount</label></div><div class="col-md-6">' . $orders_list[0]['paid_amount'] . '</div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="col-md-6"><label>Balnce Amount</label></div><div class="col-md-6">' . $orders_list[0]['balance_amount'] . '</div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="col-md-6"><label>Order Date</label></div><div class="col-md-6">' . $orders_list[0]['orderdate'] . '</div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="col-md-6"><label>Delivery Date</label></div><div class="col-md-6">' . $orders_list[0]['deliverydate'] . '</div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="col-md-6"><label>Product Name</label></div><div class="col-md-6">' . $orders_list[0]['productname'] . '</div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="col-md-6"><label>Size</label></div><div class="col-md-6">' . $orders_list[0]['psize'] . '</div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="col-md-6"><label>Meter</label></div><div class="col-md-6">' . $orders_list[0]['meter'] . '</div>
+                        </div>
+                    </div>';                
+            }
+            echo $html;
+        }
+    }
+
+    public function printorder() {
+        if (($this->input->server('REQUEST_METHOD') == 'GET')) {
+
+            $_POST['order_id'] = $_GET['order_id'];
+            $html = "";
+            $orders_list = $this->orders_model->companyorderlists($_POST['order_id']);
+            $result = $this->orders_model->measurementvalues();
+            $typeresult = $this->orders_model->producttypeview();
+            $this->load->view('companyorders/print', array('htmlcontent' => $html, 'orders_list' => $orders_list, 'typeresult' => $typeresult, 'measurements' => $result));
+        }
+    }
+
+    //Delivery Details
     public function deliverydetails($orderid) {
         if ($orderid != "") {
             $order_list = $this->orders_model->companyorderlists($orderid);
@@ -211,48 +317,7 @@ class Companyorders extends CI_Controller {
                 'deliveryid' => isset($delivery_lists[0]['id']) ? $delivery_lists[0]['id'] : "",
             ));
         }
-    }
-
-    public function measurementdetails() {
-        if (($this->input->server('REQUEST_METHOD') == 'POST')) {
-            $result = $this->orders_model->measurementvalues();
-            $html = "";
-            $typeresult = $this->orders_model->producttypevalues();
-            if (count($typeresult) > 0) {
-                $html .= '<div class="header"><h2>Product Types</h2></div><div class="row">';
-                foreach ($typeresult as $key => $value) {
-                    $html .= '<div class="col-md-4"><input type="checkbox" id="producttype_' . $key . '" name="producttype[' . $value['id'] . ']" class="chk-col-red" ' . $value['typevalue'] . '/><label for="producttype_' . $key . '">' . $value['typename'] . '</label></div>';
-                }
-                $html .= '</div>';
-            }
-            if (count($result)) {
-                $html .= '<div class="header"><h2>Measurement Detail</h2></div><div class="row">';
-                foreach ($result as $key => $value) {
-                    $html .= '<div class="col-md-3"><label for="email_address">' . $value['mname'] . '</label><div class="form-group">
-                                    <div class="form-line">
-                                        <input id="measurement_value' . $value['id'] . '" name="measurement_value[' . $value['id'] . ']" class="form-control" placeholder="value" type="text" value="' . $value['measurementvalue'] . '">
-                                    </div>
-                                </div></div>';
-                }
-                $html .= '</div>';
-            }
-            echo $html;
-        }
-    }
-
-    public function delete($id = NULL) {
-        if ($id != "") {
-            $deleteorder = $this->orders_model->update(array('dels' => 1), $id);
-            if ($deleteorder == "1") {
-                $this->session->set_flashdata('SucMessage', 'Order Details has been deleted successfully!!!');
-            } else {
-                $this->session->set_flashdata('ErrorMessages', 'Order Details has not been deleted successfully!!!');
-            }
-            redirect(base_url() . 'companyorders', 'refresh');
-        } else {
-            redirect(base_url() . 'companyorders', 'refresh');
-        }
-    }
+    }    
 
     public function deletedeliveryquantity($id = NULL, $order_id = NULL) {
         if ($id != "") {
@@ -280,87 +345,101 @@ class Companyorders extends CI_Controller {
             $this->orders_model->update(array('orderstatus' => 'inprogress'), $order_id);
         }
     }
+     
+    //Paid Details Amount
+    
+    public function paiddetails($orderid) {
+        if ($orderid != "") {
+            $order_list = $this->orders_model->companyorderlists($orderid);
 
-    public function vieworders() {
-        if (($this->input->server('REQUEST_METHOD') == 'POST')) {
-            $html = "";
-            $orders_list = $this->orders_model->companyorderlists($_POST['order_id']);
-            if (count($orders_list)) {
-                $printurl = base_url() . 'companyorders/printorder?order_id=' . $_POST['order_id'];
-                $html .= '<div class="btn-group btn-group-justified"><a href="' . $printurl . '" class="btn bg-cyan waves-effect" target="_blank"><i class="material-icons">print</i><span>Print</span></a></div>';
-                $html .= '<div class="modal-header">
-                    <h4 class="modal-title" id="defaultModalLabel">' . $orders_list[0]['orderno'] . '</h4>
-                </div><div class="modal-body">
-                    <h4>Order Details</h4>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="col-md-6"><label>Name</label></div><div class="col-md-6">' . $orders_list[0]['name'] . '</div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="col-md-6"><label>Mobile No</label></div><div class="col-md-6">' . $orders_list[0]['mobileno'] . '</div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="col-md-6"><label>Price</label></div><div class="col-md-6">' . $orders_list[0]['price'] . '</div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="col-md-6"><label>Quantity</label></div><div class="col-md-6">' . $orders_list[0]['quantity'] . '</div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="col-md-6"><label>Total Amount</label></div><div class="col-md-6">' . $orders_list[0]['total_amount'] . '</div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="col-md-6"><label>Paid Amount</label></div><div class="col-md-6">' . $orders_list[0]['paid_amount'] . '</div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="col-md-6"><label>Balnce Amount</label></div><div class="col-md-6">' . $orders_list[0]['balance_amount'] . '</div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="col-md-6"><label>Order Date</label></div><div class="col-md-6">' . $orders_list[0]['orderdate'] . '</div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="col-md-6"><label>Delivery Date</label></div><div class="col-md-6">' . $orders_list[0]['deliverydate'] . '</div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="col-md-6"><label>Product Name</label></div><div class="col-md-6">' . $orders_list[0]['productname'] . '</div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="col-md-6"><label>Size</label></div><div class="col-md-6">' . $orders_list[0]['psize'] . '</div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="col-md-6"><label>Meter</label></div><div class="col-md-6">' . $orders_list[0]['meter'] . '</div>
-                        </div>
-                    </div>';
-                /* $typeresult = $this->orders_model->producttypeview();
-                  if (count($typeresult)) {
-                  $html .= '<h4>Product Types</h4><div class="row">';
-                  foreach ($typeresult as $key => $value) {
-
-                  $html .= '<div class="col-md-6">' . $value['typename'] . '</div>';
-                  }
-                  $html .= '</div>';
-                  }
-                  $result = $this->orders_model->measurementvalues();
-                  if (count($result)) {
-                  $html .= '<h4>Measurement Details</h4><div class="row">';
-                  foreach ($result as $key => $value) {
-                  $html .= '<div class="col-md-6"><div class="col-md-6"><label for="email_address">' . $value['mname'] . '</label></div><div class="col-md-6">' . $value['measurementvalue'] . '</div></div>';
-                  }
-                  } */
+            if (count($order_list) == 0) {
+                redirect(base_url() . 'companyorders', 'refresh');
             }
-            echo $html;
+            $paid_lists = $this->orders_model->companyorderpaidlists(array('order_id' => $orderid));
+            $paidamount = $this->orders_model->getpaidamount($orderid);
+            $data = array('paid_lists' => $paid_lists, 'order_list' => $order_list, 'paidamount' => $paidamount);
+            $this->load->view('includes/header');
+            $this->load->view('includes/sidebar');
+            $this->load->view('companyorders/paidlist', $data);
+            $this->load->view('includes/footer');
+        } else {
+            redirect(base_url() . 'companyorders', 'refresh');
         }
     }
 
-    public function printorder() {
-        if (($this->input->server('REQUEST_METHOD') == 'GET')) {
+    public function ajaxsavepaid() {
+        if (($this->input->server('REQUEST_METHOD') == 'POST')) {
+            $this->form_validation->set_rules('paiddate', 'Delivery Date', 'trim|required');
+            $this->form_validation->set_rules('paidamount', 'Now Paid Amount', 'trim|required|min_length[1]|max_length[10]');
+            if ($this->form_validation->run() == FALSE) {
+                echo json_encode(array('status' => 0, 'msg' => validation_errors()));
+                return false;
+            } else {
 
-            $_POST['order_id'] = $_GET['order_id'];
-            $html = "";
-            $orders_list = $this->orders_model->companyorderlists($_POST['order_id']);
-            $result = $this->orders_model->measurementvalues();
-            $typeresult = $this->orders_model->producttypeview();
-            $this->load->view('companyorders/print', array('htmlcontent' => $html, 'orders_list' => $orders_list, 'typeresult' => $typeresult, 'measurements' => $result));
+                $data = array('order_id' => trim($this->input->post('order_id')),
+                    'paidamount' => trim($this->input->post('paidamount')),
+                    'paiddate' => trim($this->input->post('paiddate'))
+                );                
+                if (isset($_POST['paidid']) && !empty($_POST['paidid'])) {
+                    $savedelivery = $this->orders_model->updatepaidamount($data, $_POST['paidid']);
+                } else {
+                    $data['created_on'] = date('Y-m-d H:i:s');
+                    $savedelivery = $this->orders_model->savepaidamount($data);
+                }               
+                $this->changepaidamount(md5($this->input->post('order_id')));
+                if ($savedelivery == 1) {
+                    $this->session->set_flashdata('SucMessage', 'Paid Amount Details Saved Successfully');
+                    echo json_encode(array('status' => 1));
+                } else {
+                    echo json_encode(array('status' => 0, 'msg' => 'Paid Amount Details Saved Not Successfully'));
+                }
+            }
         }
     }
 
+    public function getpaiddetails() {
+        if (($this->input->server('REQUEST_METHOD') == 'POST')) {
+            $paidamount = $this->orders_model->getpaidamount(md5($_POST['orderid']));
+            $paid_lists = $this->orders_model->getcompanyorderpaidlists(array('id' => $_POST['paidid']));
+            $alreadypaidamount = isset($paidamount[0]['totalpaidamount']) ? $paidamount[0]['totalpaidamount'] : 0;
+            if (isset($_POST['paidid']) && !empty($_POST['paidid'])) {
+                $alreadypaidamount = (int) (isset($paidamount[0]['totalpaidamount']) ? $paidamount[0]['totalpaidamount'] : 0) - (int) (isset($paid_lists[0]['paidamount']) ? (int) $paid_lists[0]['paidamount'] : 0);
+            }
+
+            echo json_encode(array('alreadypaidamount' => $alreadypaidamount,
+                'paiddate' => isset($paid_lists[0]['paiddate']) ? $paid_lists[0]['paiddate'] : "",
+                'paidamount' => isset($paid_lists[0]['paidamount']) ? $paid_lists[0]['paidamount'] : "",
+                'paidid' => isset($paid_lists[0]['id']) ? $paid_lists[0]['id'] : "",
+            ));
+        }
+    }
+    
+    public function deletepaidamount($id = NULL, $order_id = NULL) {
+        if ($id != "") {
+            $deleteorder = $this->orders_model->deletepaidamount($id);
+            if ($deleteorder == "1") {
+                $this->changepaidamount($order_id);
+                $this->session->set_flashdata('SucMessage', 'Paid Amount Details has been deleted successfully!!!');
+            } else {
+                $this->session->set_flashdata('ErrorMessages', 'Paid Amount Details has not been deleted successfully!!!');
+            }
+            redirect(base_url() . 'companyorders/paiddetails/' . $order_id, 'refresh');
+        } else {
+            redirect(base_url() . 'companyorders', 'refresh');
+        }
+    }
+    
+    public function changepaidamount($order_id) {
+        $orders_list = $this->orders_model->companyorderlists($order_id);
+        $totalamount = (isset($orders_list[0]['total_amount'])) ? $orders_list[0]['total_amount'] : 0;
+        $paidlist = $this->orders_model->getpaidamount($order_id);
+        $deliverypaidamount = (isset($paidlist[0]['totalpaidamount'])) ? $paidlist[0]['totalpaidamount'] : 0;
+        $balanceamount=$totalamount-$deliverypaidamount;
+        
+        if ($totalamount == $deliverypaidamount) {
+            $this->orders_model->update(array('balance_amount' => $balanceamount,'paid_amount'=>$deliverypaidamount), $order_id);
+        } else {
+            $this->orders_model->update(array('balance_amount' =>$balanceamount,'paid_amount'=>$deliverypaidamount), $order_id);
+        }
+    }
 }

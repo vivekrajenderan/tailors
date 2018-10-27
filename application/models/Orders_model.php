@@ -530,4 +530,72 @@ class Orders_model extends CI_Model {
 
         return $result;
     }    
+    
+    public function companyorderpaidlists($data) {
+
+        $this->db->select('*');
+        $this->db->from('companypaiddetails');
+        if (isset($data['order_id']) && !empty($data['order_id'])) {
+            $this->db->where('md5(companypaiddetails.order_id)', $data['order_id']);
+        }
+        $this->db->where('companypaiddetails.dels', 0);
+        $this->db->order_by('companypaiddetails.id', 'desc');
+        $query = $this->db->get();
+
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
+        } else {
+            return array();
+        }
+    }
+    
+    public function getpaidamount($orderid) {
+        $result = array();
+        if (!empty($orderid)) {
+            $this->db->select('sum(paidamount) as totalpaidamount');
+            $this->db->from('companypaiddetails');
+            $this->db->where('md5(companypaiddetails.order_id)', $orderid);
+            $this->db->where('companypaiddetails.dels', 0);
+            $query = $this->db->get();
+
+            if ($query->num_rows() > 0) {
+                $result = $query->result_array();
+            }
+        }
+        return $result;
+    }
+    
+    public function getcompanyorderpaidlists($data) {
+        $result = array();
+        if (isset($data['id']) && !empty($data['id'])) {
+            $this->db->select('*');
+            $this->db->from('companypaiddetails');
+            $this->db->where('md5(companypaiddetails.id)', $data['id']);
+            $this->db->where('companypaiddetails.dels', 0);
+            $this->db->order_by('companypaiddetails.id', 'desc');
+            $query = $this->db->get();
+
+            if ($query->num_rows() > 0) {
+                $result = $query->result_array();
+            }
+        }
+        return $result;
+    }
+    
+    public function savepaidamount($set_data) {
+        $this->db->insert('companypaiddetails', $set_data);
+        return ($this->db->affected_rows() > 0);
+    }
+
+    public function updatepaidamount($set_data, $id) {
+        $this->db->where('id', $id);
+        $this->db->update("companypaiddetails", $set_data);
+        return 1;
+    }
+
+    public function deletepaidamount($id) {
+        $this->db->where('md5(id)', $id);
+        $this->db->delete("companypaiddetails");
+        return ($this->db->affected_rows() > 0);
+    }
 }

@@ -109,13 +109,13 @@
                             <div class="form-group form-float">
                                 <label class="form-label">Advance Amount</label>
                                 <div class="form-line">
-                                    <input type="text" class="form-control balanceamount" name="paid_amount" id="paid_amount" value="<?php echo isset($order_list[0]['paid_amount']) ? $order_list[0]['paid_amount'] : ''; ?>" required>
+                                    <input type="text" class="form-control balanceamount" name="paid_amount" id="paid_amount" value="<?php echo isset($order_list[0]['paid_amount']) ? $order_list[0]['paid_amount'] : ''; ?>" disabled="">
                                 </div>
                             </div>
                             <div class="form-group form-float">
                                 <label class="form-label">Balance Amount</label>
                                 <div class="form-line">
-                                    <input type="text" class="form-control" name="balance_amount" id="balance_amount" value="<?php echo isset($order_list[0]['balance_amount']) ? $order_list[0]['balance_amount'] : ''; ?>" disabled="" required>
+                                    <input type="text" class="form-control" name="balance_amount" id="balance_amount" value="<?php echo isset($order_list[0]['balance_amount']) ? $order_list[0]['balance_amount'] : ''; ?>" disabled="">
                                 </div>
                             </div>
                             <a href="<?php echo base_url(); ?>companyorders" class="btn bg-blue-grey waves-effect" onclick="return confirm('Are you sure cancel the data?')">Cancel</a>
