@@ -103,7 +103,7 @@ class Customerorders extends CI_Controller {
             $this->form_validation->set_rules('price', 'Price', 'trim|required|min_length[1]|max_length[10]');
             $this->form_validation->set_rules('quantity', 'Quantity', 'trim|required|min_length[1]|max_length[10]');
             //$this->form_validation->set_rules('total_amount', 'Total Amount', 'trim|required|min_length[1]|max_length[10]');
-            $this->form_validation->set_rules('paid_amount', 'Paid Amount', 'trim|required|min_length[1]|max_length[10]');
+            //$this->form_validation->set_rules('paid_amount', 'Paid Amount', 'trim|required|min_length[1]|max_length[10]');
             //$this->form_validation->set_rules('product_id', 'Product Name', 'trim|required');
             if ($this->form_validation->run() == FALSE) {
                 echo json_encode(array('status' => 0, 'msg' => validation_errors()));
@@ -123,9 +123,7 @@ class Customerorders extends CI_Controller {
                     'quantity' => trim($this->input->post('quantity')),
                     'modelprice' => trim($this->input->post('modelprice')),
                     'price' => trim($this->input->post('price')),
-                    'total_amount' => ($this->input->post('price') * $this->input->post('quantity'))+trim($this->input->post('modelprice')),
-                    'paid_amount' => trim($this->input->post('paid_amount')),
-                    'balance_amount' => ($this->input->post('price') * $this->input->post('quantity')) - $this->input->post('paid_amount')
+                    'total_amount' => ($this->input->post('price') * $this->input->post('quantity'))+trim($this->input->post('modelprice'))
                 );
 
                 if ($id != "") {
@@ -284,4 +282,100 @@ class Customerorders extends CI_Controller {
         }
     }
 
+    //Paid Details Amount
+    
+    public function paiddetails($orderid) {
+        if ($orderid != "") {
+            $order_list = $this->orders_model->customerorderlists($orderid);
+
+            if (count($order_list) == 0) {
+                redirect(base_url() . 'companyorders', 'refresh');
+            }
+            $paid_lists = $this->orders_model->companyorderpaidlists(array('order_id' => $orderid));
+            $paidamount = $this->orders_model->getpaidamount($orderid);
+            $data = array('paid_lists' => $paid_lists, 'order_list' => $order_list, 'paidamount' => $paidamount);
+            $this->load->view('includes/header');
+            $this->load->view('includes/sidebar');
+            $this->load->view('customerorders/paidlist', $data);
+            $this->load->view('includes/footer');
+        } else {
+            redirect(base_url() . 'customerorders', 'refresh');
+        }
+    }
+
+    public function ajaxsavepaid() {
+        if (($this->input->server('REQUEST_METHOD') == 'POST')) {
+            $this->form_validation->set_rules('paiddate', 'Delivery Date', 'trim|required');
+            $this->form_validation->set_rules('paidamount', 'Now Paid Amount', 'trim|required|min_length[1]|max_length[10]');
+            if ($this->form_validation->run() == FALSE) {
+                echo json_encode(array('status' => 0, 'msg' => validation_errors()));
+                return false;
+            } else {
+
+                $data = array('order_id' => trim($this->input->post('order_id')),
+                    'paidamount' => trim($this->input->post('paidamount')),
+                    'paiddate' => trim($this->input->post('paiddate'))
+                );                
+                if (isset($_POST['paidid']) && !empty($_POST['paidid'])) {
+                    $savedelivery = $this->orders_model->updatepaidamount($data, $_POST['paidid']);
+                } else {
+                    $data['created_on'] = date('Y-m-d H:i:s');
+                    $savedelivery = $this->orders_model->savepaidamount($data);
+                }               
+                $this->changepaidamount(md5($this->input->post('order_id')));
+                if ($savedelivery == 1) {
+                    $this->session->set_flashdata('SucMessage', 'Paid Amount Details Saved Successfully');
+                    echo json_encode(array('status' => 1));
+                } else {
+                    echo json_encode(array('status' => 0, 'msg' => 'Paid Amount Details Saved Not Successfully'));
+                }
+            }
+        }
+    }
+
+    public function getpaiddetails() {
+        if (($this->input->server('REQUEST_METHOD') == 'POST')) {
+            $paidamount = $this->orders_model->getpaidamount(md5($_POST['orderid']));
+            $paid_lists = $this->orders_model->getcompanyorderpaidlists(array('id' => $_POST['paidid']));
+            $alreadypaidamount = isset($paidamount[0]['totalpaidamount']) ? $paidamount[0]['totalpaidamount'] : 0;
+            if (isset($_POST['paidid']) && !empty($_POST['paidid'])) {
+                $alreadypaidamount = (int) (isset($paidamount[0]['totalpaidamount']) ? $paidamount[0]['totalpaidamount'] : 0) - (int) (isset($paid_lists[0]['paidamount']) ? (int) $paid_lists[0]['paidamount'] : 0);
+            }
+
+            echo json_encode(array('alreadypaidamount' => $alreadypaidamount,
+                'paiddate' => isset($paid_lists[0]['paiddate']) ? $paid_lists[0]['paiddate'] : "",
+                'paidamount' => isset($paid_lists[0]['paidamount']) ? $paid_lists[0]['paidamount'] : "",
+                'paidid' => isset($paid_lists[0]['id']) ? $paid_lists[0]['id'] : "",
+            ));
+        }
+    }
+    
+    public function deletepaidamount($id = NULL, $order_id = NULL) {
+        if ($id != "") {
+            $deleteorder = $this->orders_model->deletepaidamount($id);
+            if ($deleteorder == "1") {
+                $this->changepaidamount($order_id);
+                $this->session->set_flashdata('SucMessage', 'Paid Amount Details has been deleted successfully!!!');
+            } else {
+                $this->session->set_flashdata('ErrorMessages', 'Paid Amount Details has not been deleted successfully!!!');
+            }
+            redirect(base_url() . 'customerorders/paiddetails/' . $order_id, 'refresh');
+        } else {
+            redirect(base_url() . 'customerorders', 'refresh');
+        }
+    }
+    
+    public function changepaidamount($order_id) {
+        $orders_list = $this->orders_model->customerorderlists($order_id);
+        $totalamount = (isset($orders_list[0]['total_amount'])) ? $orders_list[0]['total_amount'] : 0;
+        $paidlist = $this->orders_model->getpaidamount($order_id);
+        $deliverypaidamount = (isset($paidlist[0]['totalpaidamount'])) ? $paidlist[0]['totalpaidamount'] : 0;
+        $balanceamount=$totalamount-$deliverypaidamount;
+        
+        if ($totalamount == $deliverypaidamount) {
+            $this->orders_model->update(array('balance_amount' => $balanceamount,'paid_amount'=>$deliverypaidamount), $order_id);
+        } else {
+            $this->orders_model->update(array('balance_amount' =>$balanceamount,'paid_amount'=>$deliverypaidamount), $order_id);
+        }
+    }
 }

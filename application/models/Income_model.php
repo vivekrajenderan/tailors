@@ -67,6 +67,8 @@ class Income_model extends CI_Model {
 
     public function cashlist() {
         $returnresult = array();
+        
+        //Transaction Amount
         $this->db->select('SUM(case when transtype="expense" then COALESCE(amount,0) else 0 end) AS expensetotalamount,'
                 . 'SUM(case when transtype="income" then COALESCE(amount,0) else 0 end) AS incometotalamount');
         $this->db->from('account_trans');
@@ -87,6 +89,8 @@ class Income_model extends CI_Model {
         if ($query->num_rows() > 0) {
             $returnresult = $query->result_array();           
         }
+        
+        //Staff Salary Amount
         $this->db->select('COALESCE(sum(staffsalary.balanceamount+staffsalary.debitamount),0) as staffamount');
         $this->db->from('staffsalary');
         if (isset($_POST['fromdate']) && !empty($_POST['fromdate'])) {
@@ -102,11 +106,34 @@ class Income_model extends CI_Model {
         $this->db->where('staffsalary.dels', 0);
         $this->db->where('staffsalary.status', 1);
         $query1 = $this->db->get();
-        //echo $this->db->last_query();die;
+        
         if ($query1->num_rows() > 0) {
             $staffamount = $query1->result_array();
             $returnresult[0]['expensetotalamount'] -= isset($staffamount[0]['staffamount']) ? $staffamount[0]['staffamount'] : 0;
         }
+        
+        //Staff Salary Amount
+        $this->db->select('COALESCE(sum(orderpaiddetails.paidamount),0) as orderamount');
+        $this->db->from('orderpaiddetails');
+        if (isset($_POST['fromdate']) && !empty($_POST['fromdate'])) {
+            $this->db->where('DATE(orderpaiddetails.created_on) >=', $_POST['fromdate']);
+        } else {
+            $this->db->where('DATE(orderpaiddetails.created_on) >=', date('Y-m-d'));
+        }
+        if (isset($_POST['todate']) && !empty($_POST['todate'])) {
+            $this->db->where('DATE(orderpaiddetails.created_on) <=', $_POST['todate']);
+        } else {
+            $this->db->where('DATE(orderpaiddetails.created_on) <=', date('Y-m-d'));
+        }
+        $this->db->where('orderpaiddetails.dels', 0);        
+        $query1 = $this->db->get();
+        
+        if ($query1->num_rows() > 0) {
+            $orderamount = $query1->result_array();
+            $returnresult[0]['incometotalamount'] += isset($orderamount[0]['orderamount']) ? $orderamount[0]['orderamount'] : 0;
+        }
+        
+        
         return $returnresult;
     }
 

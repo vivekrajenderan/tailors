@@ -170,7 +170,7 @@
                                                 {
                                                     "targets": -1,
                                                     "data": null,
-                                                    "defaultContent": '<a href="javascript:void(0);" title="Edit" class="editlink"><i class="material-icons" style="font-size: 18px;">edit</i></a>&nbsp;<a href="javascript:void(0);" title="Delete" class="deletelink"><i class="material-icons" style="font-size: 18px;">delete</i></a><a href="javascript:void(0);" title="View" class="viewlink"><i class="material-icons" style="font-size: 18px;">remove_red_eye</i></a>'
+                                                    "defaultContent": '<a href="javascript:void(0);" title="Edit" class="editlink"><i class="material-icons" style="font-size: 18px;">edit</i></a>&nbsp;<a href="javascript:void(0);" title="Delete" class="deletelink"><i class="material-icons" style="font-size: 18px;">delete</i></a><a href="javascript:void(0);" title="View" class="viewlink"><i class="material-icons" style="font-size: 18px;">remove_red_eye</i></a><a href="javascript:void(0);" title="Paid Details" class="viewpaid"><i class="material-icons" style="font-size: 18px;">account_balance</i></a>'
                                                 }
 
                                             ],
@@ -198,6 +198,13 @@
                                             if (orderid != "")
                                             {
                                                 vieworders(orderid);
+                                            }
+                                        });
+                                        
+                                        $(document).on('click', '.viewpaid', function () {
+                                            if (orderid != "")
+                                            {
+                                                window.location = "<?php echo base_url() . 'customerorders/paiddetails/'; ?>" + orderid;
                                             }
                                         });
 
