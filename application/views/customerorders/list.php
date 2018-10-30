@@ -129,6 +129,7 @@
                                             dom: 'Bfrtip',
                                             "processing": true,
                                             "serverSide": true,
+                                            "order": [[ 0, "desc" ]],
                                             "ajax": {
                                                 "url": "<?php echo base_url() . "customerorders/ajaxorders"; ?>",
                                                 "type": "POST"
